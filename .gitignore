@@ -1,0 +1,9 @@
+gestion_personas_crud
+*.env
+lastupdate.tmp
+.vscode/
+main
+.scannerwork/
+swagger/**
+!swagger/swagger.json
+!swagger/swagger.yml
