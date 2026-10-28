@@ -33,35 +33,23 @@ TablePartial campos_parametro {
 
 
 
-Table proveedores.perfil {
-  note: 'Contratista, docente, investigador, etc. Posiblemente Terceros GrupoInfoComplementariaId 5: Tipo Perfil'
+Table proveedores.area_conocimiento_snies {
+  note: 'AGRONOMÍA, VETERINARIA Y AFINES; BELLAS ARTES; CIENCIAS DE LA EDUCACIÓN; etc.'
   ~id
   ~campos_parametro
 
   indexes {
-    activo [name: 'idx_perfil_activo']
+    activo [name: 'idx_area_conocimiento_snies_activo']
   }
 }
 
-// Revisar funcionalidad con Carlos
-Table proveedores.prefijo_facturacion {
-  note: 'SATT, SATC, etc.'
+Table proveedores.nucleo_basico_conocimiento_snies {
+  note: 'Agronomía, Artes Plásticas, Educación, etc.'
   ~id
   ~campos_parametro
 
   indexes {
-    activo [name: 'idx_prefijo_facturacion_activo']
-  }
-}
-
-// Revisar funcionalidad con Carlos
-Table proveedores.rango_facturacion {
-  note: '0 a 100, 101 a 500, etc.'
-  ~id
-  ~campos_parametro
-
-  indexes {
-    activo [name: 'idx_rango_facturacion_activo']
+    activo [name: 'idx_nucleo_basico_conocimiento_snies_activo']
   }
 }
 
@@ -71,6 +59,7 @@ Table proveedores.proveedor {
   ~id
   tercero_id integer [not null, note: 'Referencia externa a Terceros CRUD']
   tipo_registro_id integer [not null, note: 'Referencia externa a Terceros CRUD: info complementaria, tipo contribuyente']
+  ciudad_origen_id integer [note: 'Referencia externa a Ubicaciones CRUD']
   descripcion_portafolio varchar(250)
   ~campos_auditoria
 
@@ -88,14 +77,14 @@ Table proveedores.proveedor {
 
 Table proveedores.proveedor_natural {
   ~id
-  perfil_declarado integer [not null]
   experiencia_laboral_meses integer [not null, default: 0]
   experiencia_profesional_meses integer [not null, default: 0]
+  interes_vivienda_afc numeric(5,4) [not null, default: 0.0]
+  cargo varchar(100) [not null, note: 'Campo abierto para migración']
   ~campos_auditoria
   // Persona natural tiene tambien los campos booleanos para declarante de renta, posee medicina prepagada, posee cuenta AFC, es responsable de IVA, reside fiscalmente en Colombia y realiza aportes a pensión voluntaria. Estos campos se agregarán a la tabla terceros.
 
   indexes {
-    perfil_declarado [name: 'idx_proveedor_natural_perfil_declarado']
     activo [name: 'idx_proveedor_natural_activo']
     fecha_creacion [name: 'idx_proveedor_natural_fecha_creacion']
     fecha_modificacion [name: 'idx_proveedor_natural_fecha_modificacion']
@@ -107,8 +96,67 @@ Ref fk_proovedor_natural_proveedor {
   proveedores.proveedor.id - proveedores.proveedor_natural.id
 }
 
-Ref fk_proovedor_natural_perfil {
-  proveedores.proveedor_natural.perfil_declarado > proveedores.perfil.id
+
+
+Table proveedores.titulo_proveedor_natural {
+  note: 'En sistema sólo se permitía un título y estaba en el proveedor natural. Trasladar registro único aquí en migración.'
+  ~id
+  proveedor_natural_id integer [not null]
+  perfil_id integer [not null, note: 'Referencia externa a Terceros CRUD: info complementaria, grupo tipo de perfil']
+  area_conocimiento_snies_id integer [not null]
+  nucleo_basico_conocimiento_snies_id integer [not null]
+  titulo_recibido varchar(100) [not null]
+  ~campos_auditoria
+
+  indexes {
+    proveedor_natural_id [name: 'idx_titulo_proveedor_natural_proveedor_natural_id']
+    perfil_id [name: 'idx_titulo_proveedor_natural_perfil_id']
+    area_conocimiento_snies_id [name: 'idx_titulo_proveedor_natural_area_conocimiento_snies_id']
+    nucleo_basico_conocimiento_snies_id [name: 'idx_titulo_proveedor_natural_nucleo_basico_conocimiento_snies_id']
+    activo [name: 'idx_titulo_proveedor_natural_activo']
+    fecha_creacion [name: 'idx_titulo_proveedor_natural_fecha_creacion']
+    fecha_modificacion [name: 'idx_titulo_proveedor_natural_fecha_modificacion']
+    autor_modificacion_id [name: 'idx_titulo_proveedor_natural_autor_modificacion_id']
+  }
+}
+
+Ref fk_titulo_proveedor_natural_proveedor_natural {
+  proveedores.proveedor_natural.id < proveedores.titulo_proveedor_natural.proveedor_natural_id
+}
+
+Ref fk_titulo_proveedor_natural_area_conocimiento_snies {
+  proveedores.area_conocimiento_snies.id < proveedores.titulo_proveedor_natural.area_conocimiento_snies_id
+}
+
+Ref fk_titulo_proveedor_natural_nucleo_basico_conocimiento_snies {
+  proveedores.nucleo_basico_conocimiento_snies.id < proveedores.titulo_proveedor_natural.nucleo_basico_conocimiento_snies_id
+}
+
+
+
+Table proveedores.notificacion_area_conocimiento_snies_proveedor_natural {
+  note: 'En sistema antiguo el area de conocimiento estaba atada al título del proveedor natural. Trasladar registro único aquí en migración.'
+  ~id
+  proveedor_natural_id integer [not null]
+  area_conocimiento_snies_id integer [not null]
+  ~campos_auditoria
+
+  indexes {
+    proveedor_natural_id [name: 'idx_notificacion_area_conocimiento_snies_proveedor_natural_proveedor_natural_id']
+    area_conocimiento_snies_id [name: 'idx_notificacion_area_conocimiento_snies_proveedor_natural_area_conocimiento_snies_id']
+    activo [name: 'idx_notificacion_area_conocimiento_snies_proveedor_natural_activo']
+    fecha_creacion [name: 'idx_notificacion_area_conocimiento_snies_proveedor_natural_fecha_creacion']
+    fecha_modificacion [name: 'idx_notificacion_area_conocimiento_snies_proveedor_natural_fecha_modificacion']
+    autor_modificacion_id [name: 'idx_notificacion_area_conocimiento_snies_proveedor_natural_autor_modificacion_id']
+  }
+}
+
+Ref fk_notificacion_area_conocimiento_snies_proveedor_natural_proveedor_natural {
+  proveedores.proveedor_natural.id < proveedores.notificacion_area_conocimiento_snies_proveedor_natural.proveedor_natural_id
+}
+
+Ref fk_notificacion_area_conocimiento_snies_proveedor_natural_area_conocimiento_snies {
+  proveedores.area_conocimiento_snies.id < proveedores.notificacion_area_conocimiento_snies_proveedor_natural.area_conocimiento_snies_id
 }
 
 
@@ -135,6 +183,30 @@ Table proveedores.proveedor_juridico {
 
 Ref fk_proovedor_juridico_proveedor {
   proveedores.proveedor.id - proveedores.proveedor_juridico.id
+}
+
+
+
+Table proveedores.representacion {
+  ~id
+  proveedor_id integer [not null]
+  representante_id integer [not null, note: 'Referencia externa a Terceros CRUD']
+  tipo_representacion_id integer [not null, note: 'Referencia externa a Parametros CRUD']
+  cargo_id integer [not null, note: 'Referencia externa a Parametros CRUD']
+  tiene_limitacion_cuantia boolean [not null, default: false]
+  descripcion_facultades varchar(250)
+  ~campos_auditoria
+
+  indexes {
+    activo [name: 'idx_representacion_activo']
+    fecha_creacion [name: 'idx_representacion_fecha_creacion']
+    fecha_modificacion [name: 'idx_representacion_fecha_modificacion']
+    autor_modificacion_id [name: 'idx_representacion_autor_modificacion_id']
+  }
+}
+
+Ref fk_representacion_proveedor {
+  proveedores.representacion.proveedor_id > proveedores.proveedor_juridico.id
 }
 
 
@@ -172,6 +244,7 @@ Table proveedores.cuenta_bancaria {
   numero_cuenta varchar(50) [not null]
   nombre_titular varchar(100) [not null]
   ciudad_apertura_id integer [note: 'Referencia externa a Ubicaciones CRUD']
+  capital_autorizado numeric(20,7) [not null]
   es_principal boolean [default: false]
   ~campos_auditoria
 
@@ -206,110 +279,6 @@ Table proveedores.actividad_economica_proveedor {
 
 Ref fk_actividad_economica_proveedor_proveedor {
   proveedores.actividad_economica_proveedor.proveedor_id > proveedores.proveedor.id
-}
-
-
-
-Table proveedores.perfil_financiero {
-  ~id
-  proveedor_id integer [not null]
-  gran_contribuyente boolean [not null, default: false]
-  autorretenedor boolean [not null, default: false]
-  exencion_ica boolean [not null, default: false]
-  obligado_facturar_electronicamente boolean [not null, default: false]
-  prefijo_facturacion_id integer [not null]
-  rango_facturacion_id integer [not null]
-  resolucion_facturacion varchar(50)
-  opera_moneda_extranjera boolean [not null, default: false]
-  ~campos_auditoria
-
-  indexes {
-    activo [name: 'idx_perfil_financiero_activo']
-    fecha_creacion [name: 'idx_perfil_financiero_fecha_creacion']
-    fecha_modificacion [name: 'idx_perfil_financiero_fecha_modificacion']
-    autor_modificacion_id [name: 'idx_perfil_financiero_autor_modificacion_id']
-  }
-}
-
-Ref fk_perfil_financiero_proveedor {
-  proveedores.perfil_financiero.proveedor_id > proveedores.proveedor_juridico.id
-}
-
-Ref fk_perfil_financiero_juridico_prefijo_facturacion {
-  proveedores.perfil_financiero.prefijo_facturacion_id > proveedores.prefijo_facturacion.id
-}
-
-Ref fk_perfil_financiero_juridico_rango_facturacion {
-  proveedores.perfil_financiero.rango_facturacion_id > proveedores.rango_facturacion.id
-}
-
-
-
-Table proveedores.responsabilidad_fiscal_perfil {
-  ~id
-  perfil_financiero_id integer [not null]
-  responsabilidad_fiscal_id integer [not null, note: 'Referencia externa a Parametros CRUD']
-  ~campos_auditoria
-
-  indexes {
-    activo [name: 'idx_responsabilidad_fiscal_perfil_activo']
-    fecha_creacion [name: 'idx_responsabilidad_fiscal_perfil_fecha_creacion']
-    fecha_modificacion [name: 'idx_responsabilidad_fiscal_perfil_fecha_modificacion']
-    autor_modificacion_id [name: 'idx_responsabilidad_fiscal_perfil_autor_modificacion_id']
-  }
-}
-
-Ref fk_responsabilidad_fiscal_perfil_perfil_financiero {
-  proveedores.responsabilidad_fiscal_perfil.perfil_financiero_id > proveedores.perfil_financiero.id
-}
-
-
-
-Table proveedores.informacion_financiera {
-  ~id
-  proveedor_id integer [not null]
-  fecha_corte date [not null, default: `date_trunc('year', now()) + interval '1 year - 1 day'`, note: 'Por defecto se toma el último día del año en curso']
-  moneda_id integer [note: 'Referencia externa a Parametros CRUD']
-  capital_autorizado numeric(20,7) [not null]
-  activos_totales numeric(20,7)
-  pasivos_totales numeric(20,7)
-  indice_liquidez numeric(5,4) [not null] // TODO: Evaluar eliminación de este campo
-  ~campos_auditoria
-
-  indexes {
-    activo [name: 'idx_informacion_financiera_activo']
-    fecha_creacion [name: 'idx_informacion_financiera_fecha_creacion']
-    fecha_modificacion [name: 'idx_informacion_financiera_fecha_modificacion']
-    autor_modificacion_id [name: 'idx_informacion_financiera_autor_modificacion_id']
-  }
-}
-
-Ref fk_informacion_financiera_proveedor {
-  proveedores.informacion_financiera.proveedor_id > proveedores.proveedor.id
-}
-
-
-
-Table proveedores.representacion {
-  ~id
-  proveedor_id integer [not null]
-  representante_id integer [not null, note: 'Referencia externa a Terceros CRUD']
-  tipo_representacion_id integer [not null, note: 'Referencia externa a Parametros CRUD']
-  cargo_id integer [not null, note: 'Referencia externa a Parametros CRUD']
-  tiene_limitacion_cuantia boolean [not null, default: false]
-  descripcion_facultades varchar(250)
-  ~campos_auditoria
-
-  indexes {
-    activo [name: 'idx_representacion_activo']
-    fecha_creacion [name: 'idx_representacion_fecha_creacion']
-    fecha_modificacion [name: 'idx_representacion_fecha_modificacion']
-    autor_modificacion_id [name: 'idx_representacion_autor_modificacion_id']
-  }
-}
-
-Ref fk_representacion_proveedor {
-  proveedores.representacion.proveedor_id > proveedores.proveedor_juridico.id
 }
 
 
