@@ -11,19 +11,18 @@ import (
 )
 
 type Contacto struct {
-	Id                          int        `orm:"column(id);pk;auto"`
-	ProveedorId                 *Proveedor `orm:"column(proveedor_id);rel(fk)"`
-	NombreContacto              string     `orm:"column(nombre_contacto);null"`
-	Finalidad                   string     `orm:"column(finalidad)"`
-	TipoCanal                   string     `orm:"column(tipo_canal)"`
-	ValorEspecifico             string     `orm:"column(valor_especifico)"`
-	Extension                   string     `orm:"column(extension);null"`
-	InfoComplementariaTerceroId int        `orm:"column(info_complementaria_tercero_id);null"`
-	EsPrincipal                 bool       `orm:"column(es_principal)"`
-	Activo                      bool       `orm:"column(activo)"`
-	FechaCreacion               time.Time  `orm:"column(fecha_creacion);type(timestamp without time zone)"`
-	FechaModificacion           time.Time  `orm:"column(fecha_modificacion);type(timestamp without time zone);null"`
-	AutorModificacionId         int        `orm:"column(autor_modificacion_id);null"`
+	Id                  int        `orm:"column(id);pk;auto"`
+	ProveedorId         *Proveedor `orm:"column(proveedor_id);rel(fk)"`
+	NombreContacto      string     `orm:"column(nombre_contacto);null"`
+	Finalidad           string     `orm:"column(finalidad)"`
+	TipoCanal           string     `orm:"column(tipo_canal)"`
+	ValorEspecifico     string     `orm:"column(valor_especifico)"`
+	Extension           string     `orm:"column(extension);null"`
+	EsPrincipal         bool       `orm:"column(es_principal)"`
+	Activo              bool       `orm:"column(activo)"`
+	FechaCreacion       time.Time  `orm:"column(fecha_creacion);type(timestamp without time zone)"`
+	FechaModificacion   time.Time  `orm:"column(fecha_modificacion);type(timestamp without time zone);null"`
+	AutorModificacionId int        `orm:"column(autor_modificacion_id);null"`
 }
 
 func (t *Contacto) TableName() string {

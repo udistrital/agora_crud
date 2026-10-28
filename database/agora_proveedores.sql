@@ -72,7 +72,6 @@ CREATE TABLE "proveedores"."contacto" (
   "tipo_canal" varchar(50) NOT NULL,
   "valor_especifico" varchar(100) NOT NULL,
   "extension" varchar(10),
-  "info_complementaria_tercero_id" integer,
   "es_principal" boolean NOT NULL DEFAULT false,
   "activo" boolean NOT NULL DEFAULT true,
   "fecha_creacion" timestamp NOT NULL DEFAULT (now()),
@@ -231,8 +230,6 @@ CREATE INDEX "idx_proveedor_juridico_fecha_modificacion" ON "proveedores"."prove
 
 CREATE INDEX "idx_proveedor_juridico_autor_modificacion_id" ON "proveedores"."proveedor_juridico" ("autor_modificacion_id");
 
-CREATE INDEX "idx_contacto_info_complementaria_tercero_id" ON "proveedores"."contacto" ("info_complementaria_tercero_id");
-
 CREATE INDEX "idx_contacto_activo" ON "proveedores"."contacto" ("activo");
 
 CREATE INDEX "idx_contacto_fecha_creacion" ON "proveedores"."contacto" ("fecha_creacion");
@@ -332,8 +329,6 @@ COMMENT ON COLUMN "proveedores"."proveedor_juridico"."autor_modificacion_id" IS 
 COMMENT ON COLUMN "proveedores"."contacto"."nombre_contacto" IS 'Juan Pérez';
 
 COMMENT ON COLUMN "proveedores"."contacto"."finalidad" IS 'Representante legal, contacto comercial, notificaciones, contacto de emergencia, etc.';
-
-COMMENT ON COLUMN "proveedores"."contacto"."info_complementaria_tercero_id" IS 'Referencia externa a Terceros CRUD';
 
 COMMENT ON COLUMN "proveedores"."contacto"."autor_modificacion_id" IS 'Referencia externa a Terceros CRUD';
 
