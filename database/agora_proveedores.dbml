@@ -3,15 +3,23 @@ Project agora_proveedores {
   Note: 'Base de datos para la gestión de proveedores'
 }
 
+
+
 TablePartial id {
   id serial [pk]
 }
+
+
+
+// =================================================================================
+// ||                            Gestion Personas CRUD                            ||
+// =================================================================================
 
 TablePartial campos_auditoria {
   activo boolean [not null, default: true]
   fecha_creacion timestamp [not null, default: `now()`]
   fecha_modificacion timestamp
-  autor_modificacion_id integer [note: 'Referencia externa a Terceros CRUD']
+  autor_modificacion_id integer [note: 'Posible eferencia externa a Terceros CRUD']
 }
 
 TablePartial campos_parametro {
@@ -139,12 +147,10 @@ Table proveedores.contacto {
   tipo_canal varchar(50) [not null]
   valor_especifico varchar(100) [not null] // TODO: Verificar longitud máxima
   extension varchar(10)
-  info_complementaria_tercero_id integer [note: 'Referencia externa a Terceros CRUD']
   es_principal boolean [not null, default: false]
   ~campos_auditoria
 
   indexes {
-    info_complementaria_tercero_id [name: 'idx_contacto_info_complementaria_tercero_id']
     activo [name: 'idx_contacto_activo']
     fecha_creacion [name: 'idx_contacto_fecha_creacion']
     fecha_modificacion [name: 'idx_contacto_fecha_modificacion']
