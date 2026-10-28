@@ -60,6 +60,8 @@ Table proveedores.proveedor {
   tercero_id integer [not null, note: 'Referencia externa a Terceros CRUD']
   tipo_registro_id integer [not null, note: 'Referencia externa a Terceros CRUD: info complementaria, tipo contribuyente']
   ciudad_origen_id integer [note: 'Referencia externa a Ubicaciones CRUD']
+  declara_renta boolean [not null, default: false]
+  consentimiento_datos boolean [not null, default: false]
   descripcion_portafolio varchar(250)
   ~campos_auditoria
 
@@ -301,46 +303,4 @@ Table proveedores.documento {
 
 Ref fk_documento_proveedor {
     proveedores.documento.proveedor_id > proveedores.proveedor.id
-}
-
-
-
-Table proveedores.declaracion {
-  note: 'Versionado de las declaraciones que puede firmar el proveedor.'
-  ~id
-  tipo_declaracion_id integer [not null, note: 'Referencia externa a Parametros CRUD']
-  texto varchar(250) [not null, note: 'Declaración de renta, declaración de IVA, declaración de retención en la fuente, etc.']
-  ~campos_auditoria
-
-  indexes {
-    activo [name: 'idx_declaracion_activo']
-    fecha_creacion [name: 'idx_declaracion_fecha_creacion']
-    fecha_modificacion [name: 'idx_declaracion_fecha_modificacion']
-    autor_modificacion_id [name: 'idx_declaracion_autor_modificacion_id']
-  }
-}
-
-
-
-Table proveedores.tipo_declaracion_proveedor {
-  note: 'Tabla de rompimiento entre un texto de declaración firmada y el proveedor que la firmó.'
-  ~id
-  proveedor_id integer [not null]
-  declaracion_id integer [not null]
-  ~campos_auditoria
-
-  indexes {
-    activo [name: 'idx_tipo_declaracion_proveedor_activo']
-    fecha_creacion [name: 'idx_tipo_declaracion_proveedor_fecha_creacion']
-    fecha_modificacion [name: 'idx_tipo_declaracion_proveedor_fecha_modificacion']
-    autor_modificacion_id [name: 'idx_tipo_declaracion_proveedor_autor_modificacion_id']
-  }
-}
-
-Ref fk_tipo_declaracion_proveedor_proveedor {
-  proveedores.tipo_declaracion_proveedor.proveedor_id > proveedores.proveedor.id
-}
-
-Ref fk_tipo_declaracion_proveedor_declaracion {
-  proveedores.tipo_declaracion_proveedor.declaracion_id > proveedores.declaracion.id
 }

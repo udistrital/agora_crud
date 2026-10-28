@@ -23,6 +23,8 @@ CREATE TABLE "proveedores"."proveedor" (
   "tercero_id" integer NOT NULL,
   "tipo_registro_id" integer NOT NULL,
   "ciudad_origen_id" integer,
+  "declara_renta" boolean NOT NULL DEFAULT false,
+  "consentimiento_datos" boolean NOT NULL DEFAULT false,
   "descripcion_portafolio" varchar(250),
   "activo" boolean NOT NULL DEFAULT true,
   "fecha_creacion" timestamp NOT NULL DEFAULT (now()),
@@ -147,26 +149,6 @@ CREATE TABLE "proveedores"."documento" (
   "autor_modificacion_id" integer
 );
 
-CREATE TABLE "proveedores"."declaracion" (
-  "id" serial PRIMARY KEY,
-  "tipo_declaracion_id" integer NOT NULL,
-  "texto" varchar(250) NOT NULL,
-  "activo" boolean NOT NULL DEFAULT true,
-  "fecha_creacion" timestamp NOT NULL DEFAULT (now()),
-  "fecha_modificacion" timestamp,
-  "autor_modificacion_id" integer
-);
-
-CREATE TABLE "proveedores"."tipo_declaracion_proveedor" (
-  "id" serial PRIMARY KEY,
-  "proveedor_id" integer NOT NULL,
-  "declaracion_id" integer NOT NULL,
-  "activo" boolean NOT NULL DEFAULT true,
-  "fecha_creacion" timestamp NOT NULL DEFAULT (now()),
-  "fecha_modificacion" timestamp,
-  "autor_modificacion_id" integer
-);
-
 CREATE INDEX "idx_area_conocimiento_snies_activo" ON "proveedores"."area_conocimiento_snies" ("activo");
 
 CREATE INDEX "idx_nucleo_basico_conocimiento_snies_activo" ON "proveedores"."nucleo_basico_conocimiento_snies" ("activo");
@@ -269,22 +251,6 @@ CREATE INDEX "idx_documento_fecha_modificacion" ON "proveedores"."documento" ("f
 
 CREATE INDEX "idx_documento_autor_modificacion_id" ON "proveedores"."documento" ("autor_modificacion_id");
 
-CREATE INDEX "idx_declaracion_activo" ON "proveedores"."declaracion" ("activo");
-
-CREATE INDEX "idx_declaracion_fecha_creacion" ON "proveedores"."declaracion" ("fecha_creacion");
-
-CREATE INDEX "idx_declaracion_fecha_modificacion" ON "proveedores"."declaracion" ("fecha_modificacion");
-
-CREATE INDEX "idx_declaracion_autor_modificacion_id" ON "proveedores"."declaracion" ("autor_modificacion_id");
-
-CREATE INDEX "idx_tipo_declaracion_proveedor_activo" ON "proveedores"."tipo_declaracion_proveedor" ("activo");
-
-CREATE INDEX "idx_tipo_declaracion_proveedor_fecha_creacion" ON "proveedores"."tipo_declaracion_proveedor" ("fecha_creacion");
-
-CREATE INDEX "idx_tipo_declaracion_proveedor_fecha_modificacion" ON "proveedores"."tipo_declaracion_proveedor" ("fecha_modificacion");
-
-CREATE INDEX "idx_tipo_declaracion_proveedor_autor_modificacion_id" ON "proveedores"."tipo_declaracion_proveedor" ("autor_modificacion_id");
-
 COMMENT ON TABLE "proveedores"."area_conocimiento_snies" IS 'AGRONOMÍA, VETERINARIA Y AFINES; BELLAS ARTES; CIENCIAS DE LA EDUCACIÓN; etc.';
 
 COMMENT ON TABLE "proveedores"."nucleo_basico_conocimiento_snies" IS 'Agronomía, Artes Plásticas, Educación, etc.';
@@ -347,18 +313,6 @@ COMMENT ON COLUMN "proveedores"."documento"."enlace" IS 'Archivo de registro ún
 
 COMMENT ON COLUMN "proveedores"."documento"."autor_modificacion_id" IS 'Posible eferencia externa a Terceros CRUD';
 
-COMMENT ON TABLE "proveedores"."declaracion" IS 'Versionado de las declaraciones que puede firmar el proveedor.';
-
-COMMENT ON COLUMN "proveedores"."declaracion"."tipo_declaracion_id" IS 'Referencia externa a Parametros CRUD';
-
-COMMENT ON COLUMN "proveedores"."declaracion"."texto" IS 'Declaración de renta, declaración de IVA, declaración de retención en la fuente, etc.';
-
-COMMENT ON COLUMN "proveedores"."declaracion"."autor_modificacion_id" IS 'Posible eferencia externa a Terceros CRUD';
-
-COMMENT ON TABLE "proveedores"."tipo_declaracion_proveedor" IS 'Tabla de rompimiento entre un texto de declaración firmada y el proveedor que la firmó.';
-
-COMMENT ON COLUMN "proveedores"."tipo_declaracion_proveedor"."autor_modificacion_id" IS 'Posible eferencia externa a Terceros CRUD';
-
 ALTER TABLE "proveedores"."proveedor_natural" ADD CONSTRAINT "fk_proovedor_natural_proveedor" FOREIGN KEY ("id") REFERENCES "proveedores"."proveedor" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
 ALTER TABLE "proveedores"."titulo_proveedor_natural" ADD CONSTRAINT "fk_titulo_proveedor_natural_proveedor_natural" FOREIGN KEY ("proveedor_natural_id") REFERENCES "proveedores"."proveedor_natural" ("id") DEFERRABLE INITIALLY IMMEDIATE;
@@ -382,7 +336,3 @@ ALTER TABLE "proveedores"."cuenta_bancaria" ADD CONSTRAINT "fk_cuenta_bancaria_p
 ALTER TABLE "proveedores"."actividad_economica_proveedor" ADD CONSTRAINT "fk_actividad_economica_proveedor_proveedor" FOREIGN KEY ("proveedor_id") REFERENCES "proveedores"."proveedor" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
 ALTER TABLE "proveedores"."documento" ADD CONSTRAINT "fk_documento_proveedor" FOREIGN KEY ("proveedor_id") REFERENCES "proveedores"."proveedor" ("id") DEFERRABLE INITIALLY IMMEDIATE;
-
-ALTER TABLE "proveedores"."tipo_declaracion_proveedor" ADD CONSTRAINT "fk_tipo_declaracion_proveedor_proveedor" FOREIGN KEY ("proveedor_id") REFERENCES "proveedores"."proveedor" ("id") DEFERRABLE INITIALLY IMMEDIATE;
-
-ALTER TABLE "proveedores"."tipo_declaracion_proveedor" ADD CONSTRAINT "fk_tipo_declaracion_proveedor_declaracion" FOREIGN KEY ("declaracion_id") REFERENCES "proveedores"."declaracion" ("id") DEFERRABLE INITIALLY IMMEDIATE;
