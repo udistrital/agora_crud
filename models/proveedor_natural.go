@@ -51,9 +51,9 @@ func GetProveedorNaturalById(id int) (v *ProveedorNatural, err error) {
 }
 
 // GetAllProveedorNatural retrieves all ProveedorNatural matches certain condition. Returns empty list if
-// no records exist
+// no records exist. total es la cantidad de registros que cumplen los filtros, sin aplicar limit ni offset
 func GetAllProveedorNatural(query map[string]string, fields []string, sortby []string, order []string,
-	offset int64, limit int64) (ml []interface{}, err error) {
+	offset int64, limit int64) (ml []interface{}, total int64, err error) {
 	o := orm.NewOrm()
 	qs := o.QueryTable(new(ProveedorNatural)).RelatedSel()
 	// query k=v
@@ -78,7 +78,7 @@ func GetAllProveedorNatural(query map[string]string, fields []string, sortby []s
 				} else if order[i] == "asc" {
 					orderby = v
 				} else {
-					return nil, errors.New("Error: Invalid order. Must be either [asc|desc]")
+					return nil, 0, errors.New("Error: Invalid order. Must be either [asc|desc]")
 				}
 				sortFields = append(sortFields, orderby)
 			}
@@ -92,17 +92,22 @@ func GetAllProveedorNatural(query map[string]string, fields []string, sortby []s
 				} else if order[0] == "asc" {
 					orderby = v
 				} else {
-					return nil, errors.New("Error: Invalid order. Must be either [asc|desc]")
+					return nil, 0, errors.New("Error: Invalid order. Must be either [asc|desc]")
 				}
 				sortFields = append(sortFields, orderby)
 			}
 		} else if len(sortby) != len(order) && len(order) != 1 {
-			return nil, errors.New("Error: 'sortby', 'order' sizes mismatch or 'order' size is not 1")
+			return nil, 0, errors.New("Error: 'sortby', 'order' sizes mismatch or 'order' size is not 1")
 		}
 	} else {
 		if len(order) != 0 {
-			return nil, errors.New("Error: unused 'order' fields")
+			return nil, 0, errors.New("Error: unused 'order' fields")
 		}
+	}
+
+	// total de registros que cumplen los filtros, antes de aplicar limit y offset
+	if total, err = qs.Count(); err != nil {
+		return nil, 0, err
 	}
 
 	var l []ProveedorNatural
@@ -123,9 +128,9 @@ func GetAllProveedorNatural(query map[string]string, fields []string, sortby []s
 				ml = append(ml, m)
 			}
 		}
-		return ml, nil
+		return ml, total, nil
 	}
-	return nil, err
+	return nil, 0, err
 }
 
 // UpdateProveedorNatural updates ProveedorNatural by Id and returns error if

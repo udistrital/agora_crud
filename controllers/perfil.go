@@ -74,7 +74,7 @@ func (c *PerfilController) GetOne() {
 
 // GetAll ...
 // @Title Get All
-// @Description get Perfil
+// @Description get Perfil. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
 // @Param	query	query	string	false	"Filter. e.g. col1:v1,col2:v2 ..."
 // @Param	fields	query	string	false	"Fields returned. e.g. col1,col2 ..."
 // @Param	sortby	query	string	false	"Sorted-by fields. e.g. col1,col2 ..."
@@ -125,7 +125,7 @@ func (c *PerfilController) GetAll() {
 		}
 	}
 
-	l, err := models.GetAllPerfil(query, fields, sortby, order, offset, limit)
+	l, total, err := models.GetAllPerfil(query, fields, sortby, order, offset, limit)
 	if err != nil {
 		beeLogger.Log.Error(err.Error())
 		c.Data["message"] = "Error service GetAll: The request contains an incorrect parameter or no record exists"
@@ -134,7 +134,7 @@ func (c *PerfilController) GetAll() {
 		if l == nil {
 			l = append(l, map[string]interface{}{})
 		}
-		c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Request successful", "Data": l}
+		c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Request successful", "Total": total, "Data": l}
 	}
 	c.ServeJSON()
 }
