@@ -152,7 +152,7 @@ func (c *RangoFacturacionController) Put() {
 	id, _ := strconv.Atoi(idStr)
 	v := models.RangoFacturacion{Id: id}
 	var m models.RangoFacturacion
-	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &v); err == nil {
+	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &m); err == nil {
 		if m.Id != 0 && m.Id != v.Id {
 			c.Data["message"] = "Error service Put: The id cannot be modified"
 			c.Abort("400")
