@@ -16,6 +16,7 @@ type Respuesta struct {
 	Success bool
 	Status  string
 	Message string
+	Total   *int64 // solo en las respuestas de GetAll
 	Data    interface{}
 }
 
@@ -80,7 +81,8 @@ func (r *Respuesta) IdDato(t *testing.T) int {
 }
 
 // ProbarGetAllController verifica el comportamiento común del servicio GetAll
-// de un controlador, cuya ruta base es ruta (p. ej. /v1/perfil).
+// de un controlador, cuya ruta base es ruta (p. ej. /v1/perfil). Requiere al
+// menos dos registros en la tabla, uno de ellos con Id idExistente.
 func ProbarGetAllController(t *testing.T, ruta string, idExistente int) {
 	t.Helper()
 	id := strconv.Itoa(idExistente)
@@ -95,6 +97,9 @@ func ProbarGetAllController(t *testing.T, ruta string, idExistente int) {
 		if m, ok := l[0].(map[string]interface{}); !ok || m["Id"] != float64(idExistente) {
 			t.Error("Se esperaba el registro", id, "y se obtuvo", l[0])
 		}
+		if r.Total == nil || *r.Total != 1 {
+			t.Error("Se esperaba Total 1 con el filtro por Id y se obtuvo", r.Total)
+		}
 	})
 
 	t.Run("SinResultados", func(t *testing.T) {
@@ -103,6 +108,25 @@ func ProbarGetAllController(t *testing.T, ruta string, idExistente int) {
 		l, ok := r.Data.([]interface{})
 		if !ok || len(l) != 1 {
 			t.Error("Se esperaba una lista con un objeto vacío y se obtuvo", r.Data)
+		}
+		if r.Total == nil || *r.Total != 0 {
+			t.Error("Se esperaba Total 0 sin resultados y se obtuvo", r.Total)
+		}
+	})
+
+	// El total cuenta los registros que cumplen los filtros sin aplicar limit
+	t.Run("TotalIgnoraLimit", func(t *testing.T) {
+		r := VerificarRespuesta(t, Peticion("GET", ruta+"/?limit=1", ""), http.StatusOK)
+		l, ok := r.Data.([]interface{})
+		if !ok || len(l) != 1 || r.Total == nil || *r.Total < 2 {
+			t.Error("Se esperaba 1 registro y un Total mayor o igual a 2 y se obtuvo", r.Data, r.Total)
+		}
+	})
+
+	t.Run("TotalIgnoraOffset", func(t *testing.T) {
+		r := VerificarRespuesta(t, Peticion("GET", ruta+"/?offset="+strconv.Itoa(IdInexistente), ""), http.StatusOK)
+		if r.Total == nil || *r.Total < 2 {
+			t.Error("Se esperaba un Total mayor o igual a 2 en una página vacía y se obtuvo", r.Total)
 		}
 	})
 

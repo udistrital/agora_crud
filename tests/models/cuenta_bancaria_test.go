@@ -35,6 +35,7 @@ func TestGetCuentaBancariaById(t *testing.T) {
 
 func TestGetAllCuentaBancaria(t *testing.T) {
 	creado := helpers.CrearCuentaBancaria(t)
+	helpers.CrearCuentaBancaria(t) // el total debe superar el limit de las pruebas
 	helpers.ProbarGetAll(t, models.GetAllCuentaBancaria, creado.Id)
 	t.Log("TestGetAllCuentaBancaria Finalizado Correctamente (OK)")
 }

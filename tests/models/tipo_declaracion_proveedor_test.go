@@ -35,6 +35,7 @@ func TestGetTipoDeclaracionProveedorById(t *testing.T) {
 
 func TestGetAllTipoDeclaracionProveedor(t *testing.T) {
 	creado := helpers.CrearTipoDeclaracionProveedor(t)
+	helpers.CrearTipoDeclaracionProveedor(t) // el total debe superar el limit de las pruebas
 	helpers.ProbarGetAll(t, models.GetAllTipoDeclaracionProveedor, creado.Id)
 	t.Log("TestGetAllTipoDeclaracionProveedor Finalizado Correctamente (OK)")
 }

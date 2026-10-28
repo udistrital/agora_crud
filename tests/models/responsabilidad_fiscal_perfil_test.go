@@ -35,6 +35,7 @@ func TestGetResponsabilidadFiscalPerfilById(t *testing.T) {
 
 func TestGetAllResponsabilidadFiscalPerfil(t *testing.T) {
 	creado := helpers.CrearResponsabilidadFiscalPerfil(t)
+	helpers.CrearResponsabilidadFiscalPerfil(t) // el total debe superar el limit de las pruebas
 	helpers.ProbarGetAll(t, models.GetAllResponsabilidadFiscalPerfil, creado.Id)
 	t.Log("TestGetAllResponsabilidadFiscalPerfil Finalizado Correctamente (OK)")
 }

@@ -35,6 +35,7 @@ func TestGetDeclaracionById(t *testing.T) {
 
 func TestGetAllDeclaracion(t *testing.T) {
 	creado := helpers.CrearDeclaracion(t)
+	helpers.CrearDeclaracion(t) // el total debe superar el limit de las pruebas
 	helpers.ProbarGetAll(t, models.GetAllDeclaracion, creado.Id)
 	t.Log("TestGetAllDeclaracion Finalizado Correctamente (OK)")
 }

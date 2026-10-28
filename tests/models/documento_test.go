@@ -35,6 +35,7 @@ func TestGetDocumentoById(t *testing.T) {
 
 func TestGetAllDocumento(t *testing.T) {
 	creado := helpers.CrearDocumento(t)
+	helpers.CrearDocumento(t) // el total debe superar el limit de las pruebas
 	helpers.ProbarGetAll(t, models.GetAllDocumento, creado.Id)
 	t.Log("TestGetAllDocumento Finalizado Correctamente (OK)")
 }

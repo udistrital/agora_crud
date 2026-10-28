@@ -35,6 +35,7 @@ func TestContactoGetOne(t *testing.T) {
 
 func TestContactoGetAll(t *testing.T) {
 	creado := helpers.CrearContacto(t)
+	helpers.CrearContacto(t) // el total debe superar el limit de las pruebas
 	helpers.ProbarGetAllController(t, rutaContacto, creado.Id)
 	t.Log("TestContactoGetAll Finalizado Correctamente (OK)")
 }

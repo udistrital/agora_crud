@@ -35,6 +35,7 @@ func TestDeclaracionGetOne(t *testing.T) {
 
 func TestDeclaracionGetAll(t *testing.T) {
 	creado := helpers.CrearDeclaracion(t)
+	helpers.CrearDeclaracion(t) // el total debe superar el limit de las pruebas
 	helpers.ProbarGetAllController(t, rutaDeclaracion, creado.Id)
 	t.Log("TestDeclaracionGetAll Finalizado Correctamente (OK)")
 }

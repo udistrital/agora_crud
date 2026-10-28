@@ -35,6 +35,7 @@ func TestGetContactoById(t *testing.T) {
 
 func TestGetAllContacto(t *testing.T) {
 	creado := helpers.CrearContacto(t)
+	helpers.CrearContacto(t) // el total debe superar el limit de las pruebas
 	helpers.ProbarGetAll(t, models.GetAllContacto, creado.Id)
 	t.Log("TestGetAllContacto Finalizado Correctamente (OK)")
 }

@@ -35,6 +35,7 @@ func TestActividadEconomicaProveedorGetOne(t *testing.T) {
 
 func TestActividadEconomicaProveedorGetAll(t *testing.T) {
 	creado := helpers.CrearActividadEconomicaProveedor(t)
+	helpers.CrearActividadEconomicaProveedor(t) // el total debe superar el limit de las pruebas
 	helpers.ProbarGetAllController(t, rutaActividadEconomicaProveedor, creado.Id)
 	t.Log("TestActividadEconomicaProveedorGetAll Finalizado Correctamente (OK)")
 }

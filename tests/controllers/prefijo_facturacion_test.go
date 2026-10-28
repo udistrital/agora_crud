@@ -35,6 +35,7 @@ func TestPrefijoFacturacionGetOne(t *testing.T) {
 
 func TestPrefijoFacturacionGetAll(t *testing.T) {
 	creado := helpers.CrearPrefijoFacturacion(t)
+	helpers.CrearPrefijoFacturacion(t) // el total debe superar el limit de las pruebas
 	helpers.ProbarGetAllController(t, rutaPrefijoFacturacion, creado.Id)
 	t.Log("TestPrefijoFacturacionGetAll Finalizado Correctamente (OK)")
 }

@@ -35,6 +35,7 @@ func TestProveedorJuridicoGetOne(t *testing.T) {
 
 func TestProveedorJuridicoGetAll(t *testing.T) {
 	creado := helpers.CrearProveedorJuridico(t)
+	helpers.CrearProveedorJuridico(t) // el total debe superar el limit de las pruebas
 	helpers.ProbarGetAllController(t, rutaProveedorJuridico, creado.Id)
 	t.Log("TestProveedorJuridicoGetAll Finalizado Correctamente (OK)")
 }

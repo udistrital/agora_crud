@@ -35,6 +35,7 @@ func TestDocumentoGetOne(t *testing.T) {
 
 func TestDocumentoGetAll(t *testing.T) {
 	creado := helpers.CrearDocumento(t)
+	helpers.CrearDocumento(t) // el total debe superar el limit de las pruebas
 	helpers.ProbarGetAllController(t, rutaDocumento, creado.Id)
 	t.Log("TestDocumentoGetAll Finalizado Correctamente (OK)")
 }

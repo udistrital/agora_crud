@@ -35,6 +35,7 @@ func TestGetProveedorNaturalById(t *testing.T) {
 
 func TestGetAllProveedorNatural(t *testing.T) {
 	creado := helpers.CrearProveedorNatural(t)
+	helpers.CrearProveedorNatural(t) // el total debe superar el limit de las pruebas
 	helpers.ProbarGetAll(t, models.GetAllProveedorNatural, creado.Id)
 	t.Log("TestGetAllProveedorNatural Finalizado Correctamente (OK)")
 }

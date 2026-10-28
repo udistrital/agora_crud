@@ -35,6 +35,7 @@ func TestPerfilGetOne(t *testing.T) {
 
 func TestPerfilGetAll(t *testing.T) {
 	creado := helpers.CrearPerfil(t)
+	helpers.CrearPerfil(t) // el total debe superar el limit de las pruebas
 	helpers.ProbarGetAllController(t, rutaPerfil, creado.Id)
 	t.Log("TestPerfilGetAll Finalizado Correctamente (OK)")
 }

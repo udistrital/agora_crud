@@ -35,6 +35,7 @@ func TestProveedorGetOne(t *testing.T) {
 
 func TestProveedorGetAll(t *testing.T) {
 	creado := helpers.CrearProveedor(t)
+	helpers.CrearProveedor(t) // el total debe superar el limit de las pruebas
 	helpers.ProbarGetAllController(t, rutaProveedor, creado.Id)
 	t.Log("TestProveedorGetAll Finalizado Correctamente (OK)")
 }

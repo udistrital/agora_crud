@@ -35,6 +35,7 @@ func TestTipoDeclaracionProveedorGetOne(t *testing.T) {
 
 func TestTipoDeclaracionProveedorGetAll(t *testing.T) {
 	creado := helpers.CrearTipoDeclaracionProveedor(t)
+	helpers.CrearTipoDeclaracionProveedor(t) // el total debe superar el limit de las pruebas
 	helpers.ProbarGetAllController(t, rutaTipoDeclaracionProveedor, creado.Id)
 	t.Log("TestTipoDeclaracionProveedorGetAll Finalizado Correctamente (OK)")
 }

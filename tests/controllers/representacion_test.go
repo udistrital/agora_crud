@@ -35,6 +35,7 @@ func TestRepresentacionGetOne(t *testing.T) {
 
 func TestRepresentacionGetAll(t *testing.T) {
 	creado := helpers.CrearRepresentacion(t)
+	helpers.CrearRepresentacion(t) // el total debe superar el limit de las pruebas
 	helpers.ProbarGetAllController(t, rutaRepresentacion, creado.Id)
 	t.Log("TestRepresentacionGetAll Finalizado Correctamente (OK)")
 }
