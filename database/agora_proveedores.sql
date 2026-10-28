@@ -11,6 +11,7 @@ CREATE TABLE "proveedores"."area_conocimiento_snies" (
 
 CREATE TABLE "proveedores"."nucleo_basico_conocimiento_snies" (
   "id" serial PRIMARY KEY,
+  "area_conocimiento_snies_id" integer NOT NULL,
   "nombre" varchar(50) NOT NULL,
   "descripcion" varchar(250),
   "codigo_abreviacion" varchar(20),
@@ -51,16 +52,6 @@ CREATE TABLE "proveedores"."titulo_proveedor_natural" (
   "area_conocimiento_snies_id" integer NOT NULL,
   "nucleo_basico_conocimiento_snies_id" integer NOT NULL,
   "titulo_recibido" varchar(100) NOT NULL,
-  "activo" boolean NOT NULL DEFAULT true,
-  "fecha_creacion" timestamp NOT NULL DEFAULT (now()),
-  "fecha_modificacion" timestamp,
-  "autor_modificacion_id" integer
-);
-
-CREATE TABLE "proveedores"."notificacion_area_conocimiento_snies_proveedor_natural" (
-  "id" serial PRIMARY KEY,
-  "proveedor_natural_id" integer NOT NULL,
-  "area_conocimiento_snies_id" integer NOT NULL,
   "activo" boolean NOT NULL DEFAULT true,
   "fecha_creacion" timestamp NOT NULL DEFAULT (now()),
   "fecha_modificacion" timestamp,
@@ -151,6 +142,8 @@ CREATE TABLE "proveedores"."documento" (
 
 CREATE INDEX "idx_area_conocimiento_snies_activo" ON "proveedores"."area_conocimiento_snies" ("activo");
 
+CREATE INDEX "idx_nucleo_basico_conocimiento_snies_area_conocimiento_snies_id" ON "proveedores"."nucleo_basico_conocimiento_snies" ("area_conocimiento_snies_id");
+
 CREATE INDEX "idx_nucleo_basico_conocimiento_snies_activo" ON "proveedores"."nucleo_basico_conocimiento_snies" ("activo");
 
 CREATE UNIQUE INDEX "uq_proveedor_tercero_id" ON "proveedores"."proveedor" ("tercero_id");
@@ -188,18 +181,6 @@ CREATE INDEX "idx_titulo_proveedor_natural_fecha_creacion" ON "proveedores"."tit
 CREATE INDEX "idx_titulo_proveedor_natural_fecha_modificacion" ON "proveedores"."titulo_proveedor_natural" ("fecha_modificacion");
 
 CREATE INDEX "idx_titulo_proveedor_natural_autor_modificacion_id" ON "proveedores"."titulo_proveedor_natural" ("autor_modificacion_id");
-
-CREATE INDEX "idx_notificacion_area_conocimiento_snies_proveedor_natural_proveedor_natural_id" ON "proveedores"."notificacion_area_conocimiento_snies_proveedor_natural" ("proveedor_natural_id");
-
-CREATE INDEX "idx_notificacion_area_conocimiento_snies_proveedor_natural_area_conocimiento_snies_id" ON "proveedores"."notificacion_area_conocimiento_snies_proveedor_natural" ("area_conocimiento_snies_id");
-
-CREATE INDEX "idx_notificacion_area_conocimiento_snies_proveedor_natural_activo" ON "proveedores"."notificacion_area_conocimiento_snies_proveedor_natural" ("activo");
-
-CREATE INDEX "idx_notificacion_area_conocimiento_snies_proveedor_natural_fecha_creacion" ON "proveedores"."notificacion_area_conocimiento_snies_proveedor_natural" ("fecha_creacion");
-
-CREATE INDEX "idx_notificacion_area_conocimiento_snies_proveedor_natural_fecha_modificacion" ON "proveedores"."notificacion_area_conocimiento_snies_proveedor_natural" ("fecha_modificacion");
-
-CREATE INDEX "idx_notificacion_area_conocimiento_snies_proveedor_natural_autor_modificacion_id" ON "proveedores"."notificacion_area_conocimiento_snies_proveedor_natural" ("autor_modificacion_id");
 
 CREATE UNIQUE INDEX "uq_proveedor_juridico_matricula_mercantil" ON "proveedores"."proveedor_juridico" ("matricula_mercantil");
 
@@ -273,10 +254,6 @@ COMMENT ON COLUMN "proveedores"."titulo_proveedor_natural"."perfil_id" IS 'Refer
 
 COMMENT ON COLUMN "proveedores"."titulo_proveedor_natural"."autor_modificacion_id" IS 'Posible eferencia externa a Terceros CRUD';
 
-COMMENT ON TABLE "proveedores"."notificacion_area_conocimiento_snies_proveedor_natural" IS 'En sistema antiguo el area de conocimiento estaba atada al título del proveedor natural. Trasladar registro único aquí en migración.';
-
-COMMENT ON COLUMN "proveedores"."notificacion_area_conocimiento_snies_proveedor_natural"."autor_modificacion_id" IS 'Posible eferencia externa a Terceros CRUD';
-
 COMMENT ON COLUMN "proveedores"."proveedor_juridico"."autor_modificacion_id" IS 'Posible eferencia externa a Terceros CRUD';
 
 COMMENT ON COLUMN "proveedores"."representacion"."representante_id" IS 'Referencia externa a Terceros CRUD';
@@ -313,6 +290,8 @@ COMMENT ON COLUMN "proveedores"."documento"."enlace" IS 'Archivo de registro ún
 
 COMMENT ON COLUMN "proveedores"."documento"."autor_modificacion_id" IS 'Posible eferencia externa a Terceros CRUD';
 
+ALTER TABLE "proveedores"."nucleo_basico_conocimiento_snies" ADD CONSTRAINT "fk_nucleo_basico_conocimiento_snies_area_conocimiento_snies" FOREIGN KEY ("area_conocimiento_snies_id") REFERENCES "proveedores"."area_conocimiento_snies" ("id") DEFERRABLE INITIALLY IMMEDIATE;
+
 ALTER TABLE "proveedores"."proveedor_natural" ADD CONSTRAINT "fk_proovedor_natural_proveedor" FOREIGN KEY ("id") REFERENCES "proveedores"."proveedor" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
 ALTER TABLE "proveedores"."titulo_proveedor_natural" ADD CONSTRAINT "fk_titulo_proveedor_natural_proveedor_natural" FOREIGN KEY ("proveedor_natural_id") REFERENCES "proveedores"."proveedor_natural" ("id") DEFERRABLE INITIALLY IMMEDIATE;
@@ -320,10 +299,6 @@ ALTER TABLE "proveedores"."titulo_proveedor_natural" ADD CONSTRAINT "fk_titulo_p
 ALTER TABLE "proveedores"."titulo_proveedor_natural" ADD CONSTRAINT "fk_titulo_proveedor_natural_area_conocimiento_snies" FOREIGN KEY ("area_conocimiento_snies_id") REFERENCES "proveedores"."area_conocimiento_snies" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
 ALTER TABLE "proveedores"."titulo_proveedor_natural" ADD CONSTRAINT "fk_titulo_proveedor_natural_nucleo_basico_conocimiento_snies" FOREIGN KEY ("nucleo_basico_conocimiento_snies_id") REFERENCES "proveedores"."nucleo_basico_conocimiento_snies" ("id") DEFERRABLE INITIALLY IMMEDIATE;
-
-ALTER TABLE "proveedores"."notificacion_area_conocimiento_snies_proveedor_natural" ADD CONSTRAINT "fk_notificacion_area_conocimiento_snies_proveedor_natural_proveedor_natural" FOREIGN KEY ("proveedor_natural_id") REFERENCES "proveedores"."proveedor_natural" ("id") DEFERRABLE INITIALLY IMMEDIATE;
-
-ALTER TABLE "proveedores"."notificacion_area_conocimiento_snies_proveedor_natural" ADD CONSTRAINT "fk_notificacion_area_conocimiento_snies_proveedor_natural_area_conocimiento_snies" FOREIGN KEY ("area_conocimiento_snies_id") REFERENCES "proveedores"."area_conocimiento_snies" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
 ALTER TABLE "proveedores"."proveedor_juridico" ADD CONSTRAINT "fk_proovedor_juridico_proveedor" FOREIGN KEY ("id") REFERENCES "proveedores"."proveedor" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 

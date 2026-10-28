@@ -46,11 +46,17 @@ Table proveedores.area_conocimiento_snies {
 Table proveedores.nucleo_basico_conocimiento_snies {
   note: 'Agronomía, Artes Plásticas, Educación, etc.'
   ~id
+  area_conocimiento_snies_id integer [not null]
   ~campos_parametro
 
   indexes {
+    area_conocimiento_snies_id [name: 'idx_nucleo_basico_conocimiento_snies_area_conocimiento_snies_id']
     activo [name: 'idx_nucleo_basico_conocimiento_snies_activo']
   }
+}
+
+Ref fk_nucleo_basico_conocimiento_snies_area_conocimiento_snies {
+  proveedores.area_conocimiento_snies.id < proveedores.nucleo_basico_conocimiento_snies.area_conocimiento_snies_id
 }
 
 
@@ -132,33 +138,6 @@ Ref fk_titulo_proveedor_natural_area_conocimiento_snies {
 
 Ref fk_titulo_proveedor_natural_nucleo_basico_conocimiento_snies {
   proveedores.nucleo_basico_conocimiento_snies.id < proveedores.titulo_proveedor_natural.nucleo_basico_conocimiento_snies_id
-}
-
-
-
-Table proveedores.notificacion_area_conocimiento_snies_proveedor_natural {
-  note: 'En sistema antiguo el area de conocimiento estaba atada al título del proveedor natural. Trasladar registro único aquí en migración.'
-  ~id
-  proveedor_natural_id integer [not null]
-  area_conocimiento_snies_id integer [not null]
-  ~campos_auditoria
-
-  indexes {
-    proveedor_natural_id [name: 'idx_notificacion_area_conocimiento_snies_proveedor_natural_proveedor_natural_id']
-    area_conocimiento_snies_id [name: 'idx_notificacion_area_conocimiento_snies_proveedor_natural_area_conocimiento_snies_id']
-    activo [name: 'idx_notificacion_area_conocimiento_snies_proveedor_natural_activo']
-    fecha_creacion [name: 'idx_notificacion_area_conocimiento_snies_proveedor_natural_fecha_creacion']
-    fecha_modificacion [name: 'idx_notificacion_area_conocimiento_snies_proveedor_natural_fecha_modificacion']
-    autor_modificacion_id [name: 'idx_notificacion_area_conocimiento_snies_proveedor_natural_autor_modificacion_id']
-  }
-}
-
-Ref fk_notificacion_area_conocimiento_snies_proveedor_natural_proveedor_natural {
-  proveedores.proveedor_natural.id < proveedores.notificacion_area_conocimiento_snies_proveedor_natural.proveedor_natural_id
-}
-
-Ref fk_notificacion_area_conocimiento_snies_proveedor_natural_area_conocimiento_snies {
-  proveedores.area_conocimiento_snies.id < proveedores.notificacion_area_conocimiento_snies_proveedor_natural.area_conocimiento_snies_id
 }
 
 
