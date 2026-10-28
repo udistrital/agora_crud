@@ -92,9 +92,20 @@ El script se ejecuta únicamente cuando se crea el volumen de PostgreSQL. Para r
 
 Pruebas unitarias
 
+Las pruebas de `tests/models` y `tests/controllers` usan una base de datos SQLite temporal que se crea y elimina en cada ejecución, por lo que no requieren PostgreSQL ni variables de entorno. SQLite no aplica las llaves foráneas ni los índices únicos de `database/agora_proveedores.sql`.
+
 ```shell
-# En Proceso
+# Desde la raíz del proyecto
+go test ./tests/... -v
+
+# Cobertura de models y controllers
+go test ./tests/... -coverpkg=./models,./controllers -cover
+
+# Limpiar la caché de las pruebas
+go clean -testcache
 ```
+
+El pipeline de CI (`.drone.yml`, paso `go_run_test`) ejecuta las mismas pruebas con cobertura y genera el reporte `test_report.xml`; el paso falla si alguna prueba falla.
 
 ## Estado CI
 

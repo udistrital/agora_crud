@@ -17,7 +17,7 @@ paths:
       tags:
       - actividad_economica_proveedor
       description: |-
-        get ActividadEconomicaProveedor
+        get ActividadEconomicaProveedor. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
         <br>
       operationId: ActividadEconomicaProveedorController.Get All
       parameters:
@@ -142,7 +142,7 @@ paths:
       tags:
       - contacto
       description: |-
-        get Contacto
+        get Contacto. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
         <br>
       operationId: ContactoController.Get All
       parameters:
@@ -267,7 +267,7 @@ paths:
       tags:
       - cuenta_bancaria
       description: |-
-        get CuentaBancaria
+        get CuentaBancaria. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
         <br>
       operationId: CuentaBancariaController.Get All
       parameters:
@@ -392,7 +392,7 @@ paths:
       tags:
       - declaracion
       description: |-
-        get Declaracion
+        get Declaracion. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
         <br>
       operationId: DeclaracionController.Get All
       parameters:
@@ -517,7 +517,7 @@ paths:
       tags:
       - documento
       description: |-
-        get Documento
+        get Documento. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
         <br>
       operationId: DocumentoController.Get All
       parameters:
@@ -642,7 +642,7 @@ paths:
       tags:
       - informacion_financiera
       description: |-
-        get InformacionFinanciera
+        get InformacionFinanciera. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
         <br>
       operationId: InformacionFinancieraController.Get All
       parameters:
@@ -767,7 +767,7 @@ paths:
       tags:
       - perfil
       description: |-
-        get Perfil
+        get Perfil. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
         <br>
       operationId: PerfilController.Get All
       parameters:
@@ -892,7 +892,7 @@ paths:
       tags:
       - perfil_financiero
       description: |-
-        get PerfilFinanciero
+        get PerfilFinanciero. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
         <br>
       operationId: PerfilFinancieroController.Get All
       parameters:
@@ -1017,7 +1017,7 @@ paths:
       tags:
       - prefijo_facturacion
       description: |-
-        get PrefijoFacturacion
+        get PrefijoFacturacion. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
         <br>
       operationId: PrefijoFacturacionController.Get All
       parameters:
@@ -1142,7 +1142,7 @@ paths:
       tags:
       - proveedor
       description: |-
-        get Proveedor
+        get Proveedor. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
         <br>
       operationId: ProveedorController.Get All
       parameters:
@@ -1267,7 +1267,7 @@ paths:
       tags:
       - proveedor_juridico
       description: |-
-        get ProveedorJuridico
+        get ProveedorJuridico. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
         <br>
       operationId: ProveedorJuridicoController.Get All
       parameters:
@@ -1392,7 +1392,7 @@ paths:
       tags:
       - proveedor_natural
       description: |-
-        get ProveedorNatural
+        get ProveedorNatural. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
         <br>
       operationId: ProveedorNaturalController.Get All
       parameters:
@@ -1517,7 +1517,7 @@ paths:
       tags:
       - rango_facturacion
       description: |-
-        get RangoFacturacion
+        get RangoFacturacion. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
         <br>
       operationId: RangoFacturacionController.Get All
       parameters:
@@ -1642,7 +1642,7 @@ paths:
       tags:
       - representacion
       description: |-
-        get Representacion
+        get Representacion. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
         <br>
       operationId: RepresentacionController.Get All
       parameters:
@@ -1767,7 +1767,7 @@ paths:
       tags:
       - responsabilidad_fiscal_perfil
       description: |-
-        get ResponsabilidadFiscalPerfil
+        get ResponsabilidadFiscalPerfil. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
         <br>
       operationId: ResponsabilidadFiscalPerfilController.Get All
       parameters:
@@ -1892,7 +1892,7 @@ paths:
       tags:
       - tipo_declaracion_proveedor
       description: |-
-        get TipoDeclaracionProveedor
+        get TipoDeclaracionProveedor. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
         <br>
       operationId: TipoDeclaracionProveedorController.Get All
       parameters:

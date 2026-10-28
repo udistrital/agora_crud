@@ -20,7 +20,7 @@
                 "tags": [
                     "actividad_economica_proveedor"
                 ],
-                "description": "get ActividadEconomicaProveedor\n\u003cbr\u003e",
+                "description": "get ActividadEconomicaProveedor. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset\n\u003cbr\u003e",
                 "operationId": "ActividadEconomicaProveedorController.Get All",
                 "parameters": [
                     {
@@ -193,7 +193,7 @@
                 "tags": [
                     "contacto"
                 ],
-                "description": "get Contacto\n\u003cbr\u003e",
+                "description": "get Contacto. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset\n\u003cbr\u003e",
                 "operationId": "ContactoController.Get All",
                 "parameters": [
                     {
@@ -366,7 +366,7 @@
                 "tags": [
                     "cuenta_bancaria"
                 ],
-                "description": "get CuentaBancaria\n\u003cbr\u003e",
+                "description": "get CuentaBancaria. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset\n\u003cbr\u003e",
                 "operationId": "CuentaBancariaController.Get All",
                 "parameters": [
                     {
@@ -539,7 +539,7 @@
                 "tags": [
                     "declaracion"
                 ],
-                "description": "get Declaracion\n\u003cbr\u003e",
+                "description": "get Declaracion. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset\n\u003cbr\u003e",
                 "operationId": "DeclaracionController.Get All",
                 "parameters": [
                     {
@@ -712,7 +712,7 @@
                 "tags": [
                     "documento"
                 ],
-                "description": "get Documento\n\u003cbr\u003e",
+                "description": "get Documento. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset\n\u003cbr\u003e",
                 "operationId": "DocumentoController.Get All",
                 "parameters": [
                     {
@@ -885,7 +885,7 @@
                 "tags": [
                     "informacion_financiera"
                 ],
-                "description": "get InformacionFinanciera\n\u003cbr\u003e",
+                "description": "get InformacionFinanciera. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset\n\u003cbr\u003e",
                 "operationId": "InformacionFinancieraController.Get All",
                 "parameters": [
                     {
@@ -1058,7 +1058,7 @@
                 "tags": [
                     "perfil"
                 ],
-                "description": "get Perfil\n\u003cbr\u003e",
+                "description": "get Perfil. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset\n\u003cbr\u003e",
                 "operationId": "PerfilController.Get All",
                 "parameters": [
                     {
@@ -1231,7 +1231,7 @@
                 "tags": [
                     "perfil_financiero"
                 ],
-                "description": "get PerfilFinanciero\n\u003cbr\u003e",
+                "description": "get PerfilFinanciero. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset\n\u003cbr\u003e",
                 "operationId": "PerfilFinancieroController.Get All",
                 "parameters": [
                     {
@@ -1404,7 +1404,7 @@
                 "tags": [
                     "prefijo_facturacion"
                 ],
-                "description": "get PrefijoFacturacion\n\u003cbr\u003e",
+                "description": "get PrefijoFacturacion. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset\n\u003cbr\u003e",
                 "operationId": "PrefijoFacturacionController.Get All",
                 "parameters": [
                     {
@@ -1577,7 +1577,7 @@
                 "tags": [
                     "proveedor"
                 ],
-                "description": "get Proveedor\n\u003cbr\u003e",
+                "description": "get Proveedor. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset\n\u003cbr\u003e",
                 "operationId": "ProveedorController.Get All",
                 "parameters": [
                     {
@@ -1750,7 +1750,7 @@
                 "tags": [
                     "proveedor_juridico"
                 ],
-                "description": "get ProveedorJuridico\n\u003cbr\u003e",
+                "description": "get ProveedorJuridico. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset\n\u003cbr\u003e",
                 "operationId": "ProveedorJuridicoController.Get All",
                 "parameters": [
                     {
@@ -1923,7 +1923,7 @@
                 "tags": [
                     "proveedor_natural"
                 ],
-                "description": "get ProveedorNatural\n\u003cbr\u003e",
+                "description": "get ProveedorNatural. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset\n\u003cbr\u003e",
                 "operationId": "ProveedorNaturalController.Get All",
                 "parameters": [
                     {
@@ -2096,7 +2096,7 @@
                 "tags": [
                     "rango_facturacion"
                 ],
-                "description": "get RangoFacturacion\n\u003cbr\u003e",
+                "description": "get RangoFacturacion. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset\n\u003cbr\u003e",
                 "operationId": "RangoFacturacionController.Get All",
                 "parameters": [
                     {
@@ -2269,7 +2269,7 @@
                 "tags": [
                     "representacion"
                 ],
-                "description": "get Representacion\n\u003cbr\u003e",
+                "description": "get Representacion. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset\n\u003cbr\u003e",
                 "operationId": "RepresentacionController.Get All",
                 "parameters": [
                     {
@@ -2442,7 +2442,7 @@
                 "tags": [
                     "responsabilidad_fiscal_perfil"
                 ],
-                "description": "get ResponsabilidadFiscalPerfil\n\u003cbr\u003e",
+                "description": "get ResponsabilidadFiscalPerfil. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset\n\u003cbr\u003e",
                 "operationId": "ResponsabilidadFiscalPerfilController.Get All",
                 "parameters": [
                     {
@@ -2615,7 +2615,7 @@
                 "tags": [
                     "tipo_declaracion_proveedor"
                 ],
-                "description": "get TipoDeclaracionProveedor\n\u003cbr\u003e",
+                "description": "get TipoDeclaracionProveedor. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset\n\u003cbr\u003e",
                 "operationId": "TipoDeclaracionProveedorController.Get All",
                 "parameters": [
                     {
