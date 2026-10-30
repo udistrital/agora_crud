@@ -18,7 +18,7 @@ func TestPrefijoFacturacionPost(t *testing.T) {
 	if v, err := models.GetPrefijoFacturacionById(r.IdDato(t)); err != nil || v.Nombre != nuevo.Nombre || !v.Activo {
 		t.Error("Se esperaba el registro creado y activo y se obtuvo", v, err)
 	}
-	helpers.VerificarRespuesta(t, helpers.Peticion("POST", rutaPrefijoFacturacion+"/", `{"Id":"texto"}`), http.StatusBadRequest)
+	helpers.VerificarError(t, helpers.Peticion("POST", rutaPrefijoFacturacion+"/", `{"Id":"texto"}`), http.StatusBadRequest, "cuerpo de la solicitud invalido")
 	t.Log("TestPrefijoFacturacionPost Finalizado Correctamente (OK)")
 }
 
@@ -29,7 +29,9 @@ func TestPrefijoFacturacionGetOne(t *testing.T) {
 		t.Error("Se esperaba el registro", creado.Id, "y se obtuvo", r.Data)
 	}
 	w = helpers.Peticion("GET", fmt.Sprintf("%s/%d", rutaPrefijoFacturacion, helpers.IdInexistente), "")
-	helpers.VerificarRespuesta(t, w, http.StatusNotFound)
+	helpers.VerificarError(t, w, http.StatusNotFound, "registro no encontrado")
+	w = helpers.Peticion("GET", rutaPrefijoFacturacion+"/abc", "")
+	helpers.VerificarError(t, w, http.StatusNotFound, "el parametro id debe ser numerico")
 	t.Log("TestPrefijoFacturacionGetOne Finalizado Correctamente (OK)")
 }
 
@@ -38,6 +40,16 @@ func TestPrefijoFacturacionGetAll(t *testing.T) {
 	helpers.CrearPrefijoFacturacion(t) // el total debe superar el limit de las pruebas
 	helpers.ProbarGetAllController(t, rutaPrefijoFacturacion, creado.Id)
 	t.Log("TestPrefijoFacturacionGetAll Finalizado Correctamente (OK)")
+}
+
+func TestPrefijoFacturacionActivo(t *testing.T) {
+	activo := helpers.CrearPrefijoFacturacion(t)
+	inactivo := helpers.CrearPrefijoFacturacion(t)
+	if err := models.DeletePrefijoFacturacion(inactivo.Id); err != nil {
+		t.Fatal("No se pudo inactivar el registro:", err)
+	}
+	helpers.ProbarActivoController(t, rutaPrefijoFacturacion, activo.Id, inactivo.Id)
+	t.Log("TestPrefijoFacturacionActivo Finalizado Correctamente (OK)")
 }
 
 func TestPrefijoFacturacionPut(t *testing.T) {
@@ -52,11 +64,12 @@ func TestPrefijoFacturacionPut(t *testing.T) {
 	}
 
 	cambios.Id = creado.Id + 1
-	helpers.VerificarRespuesta(t, helpers.Peticion("PUT", ruta, helpers.JSON(t, cambios)), http.StatusBadRequest)
-	helpers.VerificarRespuesta(t, helpers.Peticion("PUT", ruta, `{"Id":"texto"}`), http.StatusBadRequest)
+	helpers.VerificarError(t, helpers.Peticion("PUT", ruta, helpers.JSON(t, cambios)), http.StatusBadRequest, "el Id del cuerpo no coincide con el id de la ruta")
+	helpers.VerificarError(t, helpers.Peticion("PUT", ruta, `{"Id":"texto"}`), http.StatusBadRequest, "cuerpo de la solicitud invalido")
+	helpers.VerificarError(t, helpers.Peticion("PUT", rutaPrefijoFacturacion+"/abc", helpers.JSON(t, cambios)), http.StatusBadRequest, "el parametro id debe ser numerico")
 	cambios.Id = 0
 	w := helpers.Peticion("PUT", fmt.Sprintf("%s/%d", rutaPrefijoFacturacion, helpers.IdInexistente), helpers.JSON(t, cambios))
-	helpers.VerificarRespuesta(t, w, http.StatusBadRequest)
+	helpers.VerificarError(t, w, http.StatusBadRequest, "no existe un registro con el id indicado")
 	t.Log("TestPrefijoFacturacionPut Finalizado Correctamente (OK)")
 }
 
@@ -70,6 +83,8 @@ func TestPrefijoFacturacionDelete(t *testing.T) {
 		t.Error("Se esperaba el registro inactivo (borrado lógico) y se obtuvo", v)
 	}
 	w = helpers.Peticion("DELETE", fmt.Sprintf("%s/%d", rutaPrefijoFacturacion, helpers.IdInexistente), "")
-	helpers.VerificarRespuesta(t, w, http.StatusNotFound)
+	helpers.VerificarError(t, w, http.StatusNotFound, "no existe un registro con el id indicado")
+	w = helpers.Peticion("DELETE", rutaPrefijoFacturacion+"/abc", "")
+	helpers.VerificarError(t, w, http.StatusNotFound, "el parametro id debe ser numerico")
 	t.Log("TestPrefijoFacturacionDelete Finalizado Correctamente (OK)")
 }

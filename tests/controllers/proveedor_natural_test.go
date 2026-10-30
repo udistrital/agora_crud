@@ -18,7 +18,7 @@ func TestProveedorNaturalPost(t *testing.T) {
 	if v, err := models.GetProveedorNaturalById(r.IdDato(t)); err != nil || v.ExperienciaLaboralMeses != nuevo.ExperienciaLaboralMeses || !v.Activo {
 		t.Error("Se esperaba el registro creado y activo y se obtuvo", v, err)
 	}
-	helpers.VerificarRespuesta(t, helpers.Peticion("POST", rutaProveedorNatural+"/", `{"Id":"texto"}`), http.StatusBadRequest)
+	helpers.VerificarError(t, helpers.Peticion("POST", rutaProveedorNatural+"/", `{"Id":"texto"}`), http.StatusBadRequest, "cuerpo de la solicitud invalido")
 	t.Log("TestProveedorNaturalPost Finalizado Correctamente (OK)")
 }
 
@@ -29,7 +29,9 @@ func TestProveedorNaturalGetOne(t *testing.T) {
 		t.Error("Se esperaba el registro", creado.Id, "y se obtuvo", r.Data)
 	}
 	w = helpers.Peticion("GET", fmt.Sprintf("%s/%d", rutaProveedorNatural, helpers.IdInexistente), "")
-	helpers.VerificarRespuesta(t, w, http.StatusNotFound)
+	helpers.VerificarError(t, w, http.StatusNotFound, "registro no encontrado")
+	w = helpers.Peticion("GET", rutaProveedorNatural+"/abc", "")
+	helpers.VerificarError(t, w, http.StatusNotFound, "el parametro id debe ser numerico")
 	t.Log("TestProveedorNaturalGetOne Finalizado Correctamente (OK)")
 }
 
@@ -38,6 +40,16 @@ func TestProveedorNaturalGetAll(t *testing.T) {
 	helpers.CrearProveedorNatural(t) // el total debe superar el limit de las pruebas
 	helpers.ProbarGetAllController(t, rutaProveedorNatural, creado.Id)
 	t.Log("TestProveedorNaturalGetAll Finalizado Correctamente (OK)")
+}
+
+func TestProveedorNaturalActivo(t *testing.T) {
+	activo := helpers.CrearProveedorNatural(t)
+	inactivo := helpers.CrearProveedorNatural(t)
+	if err := models.DeleteProveedorNatural(inactivo.Id); err != nil {
+		t.Fatal("No se pudo inactivar el registro:", err)
+	}
+	helpers.ProbarActivoController(t, rutaProveedorNatural, activo.Id, inactivo.Id)
+	t.Log("TestProveedorNaturalActivo Finalizado Correctamente (OK)")
 }
 
 func TestProveedorNaturalPut(t *testing.T) {
@@ -52,11 +64,12 @@ func TestProveedorNaturalPut(t *testing.T) {
 	}
 
 	cambios.Id = creado.Id + 1
-	helpers.VerificarRespuesta(t, helpers.Peticion("PUT", ruta, helpers.JSON(t, cambios)), http.StatusBadRequest)
-	helpers.VerificarRespuesta(t, helpers.Peticion("PUT", ruta, `{"Id":"texto"}`), http.StatusBadRequest)
+	helpers.VerificarError(t, helpers.Peticion("PUT", ruta, helpers.JSON(t, cambios)), http.StatusBadRequest, "el Id del cuerpo no coincide con el id de la ruta")
+	helpers.VerificarError(t, helpers.Peticion("PUT", ruta, `{"Id":"texto"}`), http.StatusBadRequest, "cuerpo de la solicitud invalido")
+	helpers.VerificarError(t, helpers.Peticion("PUT", rutaProveedorNatural+"/abc", helpers.JSON(t, cambios)), http.StatusBadRequest, "el parametro id debe ser numerico")
 	cambios.Id = 0
 	w := helpers.Peticion("PUT", fmt.Sprintf("%s/%d", rutaProveedorNatural, helpers.IdInexistente), helpers.JSON(t, cambios))
-	helpers.VerificarRespuesta(t, w, http.StatusBadRequest)
+	helpers.VerificarError(t, w, http.StatusBadRequest, "no existe un registro con el id indicado")
 	t.Log("TestProveedorNaturalPut Finalizado Correctamente (OK)")
 }
 
@@ -70,6 +83,8 @@ func TestProveedorNaturalDelete(t *testing.T) {
 		t.Error("Se esperaba el registro inactivo (borrado lógico) y se obtuvo", v)
 	}
 	w = helpers.Peticion("DELETE", fmt.Sprintf("%s/%d", rutaProveedorNatural, helpers.IdInexistente), "")
-	helpers.VerificarRespuesta(t, w, http.StatusNotFound)
+	helpers.VerificarError(t, w, http.StatusNotFound, "no existe un registro con el id indicado")
+	w = helpers.Peticion("DELETE", rutaProveedorNatural+"/abc", "")
+	helpers.VerificarError(t, w, http.StatusNotFound, "el parametro id debe ser numerico")
 	t.Log("TestProveedorNaturalDelete Finalizado Correctamente (OK)")
 }
