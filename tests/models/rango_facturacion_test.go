@@ -34,6 +34,7 @@ func TestGetRangoFacturacionById(t *testing.T) {
 
 func TestGetAllRangoFacturacion(t *testing.T) {
 	creado := helpers.CrearRangoFacturacion(t)
+	helpers.CrearRangoFacturacion(t) // el total debe superar el limit de las pruebas
 	helpers.ProbarGetAll(t, models.GetAllRangoFacturacion, creado.Id)
 	t.Log("TestGetAllRangoFacturacion Finalizado Correctamente (OK)")
 }

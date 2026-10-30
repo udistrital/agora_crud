@@ -34,6 +34,7 @@ func TestGetPrefijoFacturacionById(t *testing.T) {
 
 func TestGetAllPrefijoFacturacion(t *testing.T) {
 	creado := helpers.CrearPrefijoFacturacion(t)
+	helpers.CrearPrefijoFacturacion(t) // el total debe superar el limit de las pruebas
 	helpers.ProbarGetAll(t, models.GetAllPrefijoFacturacion, creado.Id)
 	t.Log("TestGetAllPrefijoFacturacion Finalizado Correctamente (OK)")
 }

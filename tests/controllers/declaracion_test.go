@@ -18,7 +18,7 @@ func TestDeclaracionPost(t *testing.T) {
 	if v, err := models.GetDeclaracionById(r.IdDato(t)); err != nil || v.Texto != nuevo.Texto || !v.Activo {
 		t.Error("Se esperaba el registro creado y activo y se obtuvo", v, err)
 	}
-	helpers.VerificarRespuesta(t, helpers.Peticion("POST", rutaDeclaracion+"/", `{"Id":"texto"}`), http.StatusBadRequest)
+	helpers.VerificarError(t, helpers.Peticion("POST", rutaDeclaracion+"/", `{"Id":"texto"}`), http.StatusBadRequest, "cuerpo de la solicitud invalido")
 	t.Log("TestDeclaracionPost Finalizado Correctamente (OK)")
 }
 
@@ -29,14 +29,27 @@ func TestDeclaracionGetOne(t *testing.T) {
 		t.Error("Se esperaba el registro", creado.Id, "y se obtuvo", r.Data)
 	}
 	w = helpers.Peticion("GET", fmt.Sprintf("%s/%d", rutaDeclaracion, helpers.IdInexistente), "")
-	helpers.VerificarRespuesta(t, w, http.StatusNotFound)
+	helpers.VerificarError(t, w, http.StatusNotFound, "registro no encontrado")
+	w = helpers.Peticion("GET", rutaDeclaracion+"/abc", "")
+	helpers.VerificarError(t, w, http.StatusNotFound, "el parametro id debe ser numerico")
 	t.Log("TestDeclaracionGetOne Finalizado Correctamente (OK)")
 }
 
 func TestDeclaracionGetAll(t *testing.T) {
 	creado := helpers.CrearDeclaracion(t)
+	helpers.CrearDeclaracion(t) // el total debe superar el limit de las pruebas
 	helpers.ProbarGetAllController(t, rutaDeclaracion, creado.Id)
 	t.Log("TestDeclaracionGetAll Finalizado Correctamente (OK)")
+}
+
+func TestDeclaracionActivo(t *testing.T) {
+	activo := helpers.CrearDeclaracion(t)
+	inactivo := helpers.CrearDeclaracion(t)
+	if err := models.DeleteDeclaracion(inactivo.Id); err != nil {
+		t.Fatal("No se pudo inactivar el registro:", err)
+	}
+	helpers.ProbarActivoController(t, rutaDeclaracion, activo.Id, inactivo.Id)
+	t.Log("TestDeclaracionActivo Finalizado Correctamente (OK)")
 }
 
 func TestDeclaracionPut(t *testing.T) {
@@ -51,11 +64,12 @@ func TestDeclaracionPut(t *testing.T) {
 	}
 
 	cambios.Id = creado.Id + 1
-	helpers.VerificarRespuesta(t, helpers.Peticion("PUT", ruta, helpers.JSON(t, cambios)), http.StatusBadRequest)
-	helpers.VerificarRespuesta(t, helpers.Peticion("PUT", ruta, `{"Id":"texto"}`), http.StatusBadRequest)
+	helpers.VerificarError(t, helpers.Peticion("PUT", ruta, helpers.JSON(t, cambios)), http.StatusBadRequest, "el Id del cuerpo no coincide con el id de la ruta")
+	helpers.VerificarError(t, helpers.Peticion("PUT", ruta, `{"Id":"texto"}`), http.StatusBadRequest, "cuerpo de la solicitud invalido")
+	helpers.VerificarError(t, helpers.Peticion("PUT", rutaDeclaracion+"/abc", helpers.JSON(t, cambios)), http.StatusBadRequest, "el parametro id debe ser numerico")
 	cambios.Id = 0
 	w := helpers.Peticion("PUT", fmt.Sprintf("%s/%d", rutaDeclaracion, helpers.IdInexistente), helpers.JSON(t, cambios))
-	helpers.VerificarRespuesta(t, w, http.StatusBadRequest)
+	helpers.VerificarError(t, w, http.StatusBadRequest, "no existe un registro con el id indicado")
 	t.Log("TestDeclaracionPut Finalizado Correctamente (OK)")
 }
 
@@ -69,6 +83,8 @@ func TestDeclaracionDelete(t *testing.T) {
 		t.Error("Se esperaba el registro inactivo (borrado lógico) y se obtuvo", v)
 	}
 	w = helpers.Peticion("DELETE", fmt.Sprintf("%s/%d", rutaDeclaracion, helpers.IdInexistente), "")
-	helpers.VerificarRespuesta(t, w, http.StatusNotFound)
+	helpers.VerificarError(t, w, http.StatusNotFound, "no existe un registro con el id indicado")
+	w = helpers.Peticion("DELETE", rutaDeclaracion+"/abc", "")
+	helpers.VerificarError(t, w, http.StatusNotFound, "el parametro id debe ser numerico")
 	t.Log("TestDeclaracionDelete Finalizado Correctamente (OK)")
 }

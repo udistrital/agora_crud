@@ -54,6 +54,7 @@ func TestGetInformacionFinancieraById(t *testing.T) {
 
 func TestGetAllInformacionFinanciera(t *testing.T) {
 	creado := helpers.CrearInformacionFinanciera(t)
+	helpers.CrearInformacionFinanciera(t) // el total debe superar el limit de las pruebas
 	helpers.ProbarGetAll(t, models.GetAllInformacionFinanciera, creado.Id)
 	t.Log("TestGetAllInformacionFinanciera Finalizado Correctamente (OK)")
 }

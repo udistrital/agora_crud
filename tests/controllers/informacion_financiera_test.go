@@ -18,7 +18,7 @@ func TestInformacionFinancieraPost(t *testing.T) {
 	if v, err := models.GetInformacionFinancieraById(r.IdDato(t)); err != nil || v.MonedaId != nuevo.MonedaId || !v.Activo {
 		t.Error("Se esperaba el registro creado y activo y se obtuvo", v, err)
 	}
-	helpers.VerificarRespuesta(t, helpers.Peticion("POST", rutaInformacionFinanciera+"/", `{"Id":"texto"}`), http.StatusBadRequest)
+	helpers.VerificarError(t, helpers.Peticion("POST", rutaInformacionFinanciera+"/", `{"Id":"texto"}`), http.StatusBadRequest, "cuerpo de la solicitud invalido")
 	t.Log("TestInformacionFinancieraPost Finalizado Correctamente (OK)")
 }
 
@@ -29,14 +29,27 @@ func TestInformacionFinancieraGetOne(t *testing.T) {
 		t.Error("Se esperaba el registro", creado.Id, "y se obtuvo", r.Data)
 	}
 	w = helpers.Peticion("GET", fmt.Sprintf("%s/%d", rutaInformacionFinanciera, helpers.IdInexistente), "")
-	helpers.VerificarRespuesta(t, w, http.StatusNotFound)
+	helpers.VerificarError(t, w, http.StatusNotFound, "registro no encontrado")
+	w = helpers.Peticion("GET", rutaInformacionFinanciera+"/abc", "")
+	helpers.VerificarError(t, w, http.StatusNotFound, "el parametro id debe ser numerico")
 	t.Log("TestInformacionFinancieraGetOne Finalizado Correctamente (OK)")
 }
 
 func TestInformacionFinancieraGetAll(t *testing.T) {
 	creado := helpers.CrearInformacionFinanciera(t)
+	helpers.CrearInformacionFinanciera(t) // el total debe superar el limit de las pruebas
 	helpers.ProbarGetAllController(t, rutaInformacionFinanciera, creado.Id)
 	t.Log("TestInformacionFinancieraGetAll Finalizado Correctamente (OK)")
+}
+
+func TestInformacionFinancieraActivo(t *testing.T) {
+	activo := helpers.CrearInformacionFinanciera(t)
+	inactivo := helpers.CrearInformacionFinanciera(t)
+	if err := models.DeleteInformacionFinanciera(inactivo.Id); err != nil {
+		t.Fatal("No se pudo inactivar el registro:", err)
+	}
+	helpers.ProbarActivoController(t, rutaInformacionFinanciera, activo.Id, inactivo.Id)
+	t.Log("TestInformacionFinancieraActivo Finalizado Correctamente (OK)")
 }
 
 func TestInformacionFinancieraPut(t *testing.T) {
@@ -51,11 +64,12 @@ func TestInformacionFinancieraPut(t *testing.T) {
 	}
 
 	cambios.Id = creado.Id + 1
-	helpers.VerificarRespuesta(t, helpers.Peticion("PUT", ruta, helpers.JSON(t, cambios)), http.StatusBadRequest)
-	helpers.VerificarRespuesta(t, helpers.Peticion("PUT", ruta, `{"Id":"texto"}`), http.StatusBadRequest)
+	helpers.VerificarError(t, helpers.Peticion("PUT", ruta, helpers.JSON(t, cambios)), http.StatusBadRequest, "el Id del cuerpo no coincide con el id de la ruta")
+	helpers.VerificarError(t, helpers.Peticion("PUT", ruta, `{"Id":"texto"}`), http.StatusBadRequest, "cuerpo de la solicitud invalido")
+	helpers.VerificarError(t, helpers.Peticion("PUT", rutaInformacionFinanciera+"/abc", helpers.JSON(t, cambios)), http.StatusBadRequest, "el parametro id debe ser numerico")
 	cambios.Id = 0
 	w := helpers.Peticion("PUT", fmt.Sprintf("%s/%d", rutaInformacionFinanciera, helpers.IdInexistente), helpers.JSON(t, cambios))
-	helpers.VerificarRespuesta(t, w, http.StatusBadRequest)
+	helpers.VerificarError(t, w, http.StatusBadRequest, "no existe un registro con el id indicado")
 	t.Log("TestInformacionFinancieraPut Finalizado Correctamente (OK)")
 }
 
@@ -69,6 +83,8 @@ func TestInformacionFinancieraDelete(t *testing.T) {
 		t.Error("Se esperaba el registro inactivo (borrado lógico) y se obtuvo", v)
 	}
 	w = helpers.Peticion("DELETE", fmt.Sprintf("%s/%d", rutaInformacionFinanciera, helpers.IdInexistente), "")
-	helpers.VerificarRespuesta(t, w, http.StatusNotFound)
+	helpers.VerificarError(t, w, http.StatusNotFound, "no existe un registro con el id indicado")
+	w = helpers.Peticion("DELETE", rutaInformacionFinanciera+"/abc", "")
+	helpers.VerificarError(t, w, http.StatusNotFound, "el parametro id debe ser numerico")
 	t.Log("TestInformacionFinancieraDelete Finalizado Correctamente (OK)")
 }

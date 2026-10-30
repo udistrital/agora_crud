@@ -34,6 +34,7 @@ func TestGetPerfilById(t *testing.T) {
 
 func TestGetAllPerfil(t *testing.T) {
 	creado := helpers.CrearPerfil(t)
+	helpers.CrearPerfil(t) // el total debe superar el limit de las pruebas
 	helpers.ProbarGetAll(t, models.GetAllPerfil, creado.Id)
 	t.Log("TestGetAllPerfil Finalizado Correctamente (OK)")
 }

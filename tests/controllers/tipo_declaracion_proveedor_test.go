@@ -18,7 +18,7 @@ func TestTipoDeclaracionProveedorPost(t *testing.T) {
 	if v, err := models.GetTipoDeclaracionProveedorById(r.IdDato(t)); err != nil || v.AutorModificacionId != nuevo.AutorModificacionId || !v.Activo {
 		t.Error("Se esperaba el registro creado y activo y se obtuvo", v, err)
 	}
-	helpers.VerificarRespuesta(t, helpers.Peticion("POST", rutaTipoDeclaracionProveedor+"/", `{"Id":"texto"}`), http.StatusBadRequest)
+	helpers.VerificarError(t, helpers.Peticion("POST", rutaTipoDeclaracionProveedor+"/", `{"Id":"texto"}`), http.StatusBadRequest, "cuerpo de la solicitud invalido")
 	t.Log("TestTipoDeclaracionProveedorPost Finalizado Correctamente (OK)")
 }
 
@@ -29,14 +29,27 @@ func TestTipoDeclaracionProveedorGetOne(t *testing.T) {
 		t.Error("Se esperaba el registro", creado.Id, "y se obtuvo", r.Data)
 	}
 	w = helpers.Peticion("GET", fmt.Sprintf("%s/%d", rutaTipoDeclaracionProveedor, helpers.IdInexistente), "")
-	helpers.VerificarRespuesta(t, w, http.StatusNotFound)
+	helpers.VerificarError(t, w, http.StatusNotFound, "registro no encontrado")
+	w = helpers.Peticion("GET", rutaTipoDeclaracionProveedor+"/abc", "")
+	helpers.VerificarError(t, w, http.StatusNotFound, "el parametro id debe ser numerico")
 	t.Log("TestTipoDeclaracionProveedorGetOne Finalizado Correctamente (OK)")
 }
 
 func TestTipoDeclaracionProveedorGetAll(t *testing.T) {
 	creado := helpers.CrearTipoDeclaracionProveedor(t)
+	helpers.CrearTipoDeclaracionProveedor(t) // el total debe superar el limit de las pruebas
 	helpers.ProbarGetAllController(t, rutaTipoDeclaracionProveedor, creado.Id)
 	t.Log("TestTipoDeclaracionProveedorGetAll Finalizado Correctamente (OK)")
+}
+
+func TestTipoDeclaracionProveedorActivo(t *testing.T) {
+	activo := helpers.CrearTipoDeclaracionProveedor(t)
+	inactivo := helpers.CrearTipoDeclaracionProveedor(t)
+	if err := models.DeleteTipoDeclaracionProveedor(inactivo.Id); err != nil {
+		t.Fatal("No se pudo inactivar el registro:", err)
+	}
+	helpers.ProbarActivoController(t, rutaTipoDeclaracionProveedor, activo.Id, inactivo.Id)
+	t.Log("TestTipoDeclaracionProveedorActivo Finalizado Correctamente (OK)")
 }
 
 func TestTipoDeclaracionProveedorPut(t *testing.T) {
@@ -51,11 +64,12 @@ func TestTipoDeclaracionProveedorPut(t *testing.T) {
 	}
 
 	cambios.Id = creado.Id + 1
-	helpers.VerificarRespuesta(t, helpers.Peticion("PUT", ruta, helpers.JSON(t, cambios)), http.StatusBadRequest)
-	helpers.VerificarRespuesta(t, helpers.Peticion("PUT", ruta, `{"Id":"texto"}`), http.StatusBadRequest)
+	helpers.VerificarError(t, helpers.Peticion("PUT", ruta, helpers.JSON(t, cambios)), http.StatusBadRequest, "el Id del cuerpo no coincide con el id de la ruta")
+	helpers.VerificarError(t, helpers.Peticion("PUT", ruta, `{"Id":"texto"}`), http.StatusBadRequest, "cuerpo de la solicitud invalido")
+	helpers.VerificarError(t, helpers.Peticion("PUT", rutaTipoDeclaracionProveedor+"/abc", helpers.JSON(t, cambios)), http.StatusBadRequest, "el parametro id debe ser numerico")
 	cambios.Id = 0
 	w := helpers.Peticion("PUT", fmt.Sprintf("%s/%d", rutaTipoDeclaracionProveedor, helpers.IdInexistente), helpers.JSON(t, cambios))
-	helpers.VerificarRespuesta(t, w, http.StatusBadRequest)
+	helpers.VerificarError(t, w, http.StatusBadRequest, "no existe un registro con el id indicado")
 	t.Log("TestTipoDeclaracionProveedorPut Finalizado Correctamente (OK)")
 }
 
@@ -69,6 +83,8 @@ func TestTipoDeclaracionProveedorDelete(t *testing.T) {
 		t.Error("Se esperaba el registro inactivo (borrado lógico) y se obtuvo", v)
 	}
 	w = helpers.Peticion("DELETE", fmt.Sprintf("%s/%d", rutaTipoDeclaracionProveedor, helpers.IdInexistente), "")
-	helpers.VerificarRespuesta(t, w, http.StatusNotFound)
+	helpers.VerificarError(t, w, http.StatusNotFound, "no existe un registro con el id indicado")
+	w = helpers.Peticion("DELETE", rutaTipoDeclaracionProveedor+"/abc", "")
+	helpers.VerificarError(t, w, http.StatusNotFound, "el parametro id debe ser numerico")
 	t.Log("TestTipoDeclaracionProveedorDelete Finalizado Correctamente (OK)")
 }

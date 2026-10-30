@@ -11,11 +11,13 @@ import (
 	beego "github.com/beego/beego/v2/server/web"
 )
 
-// Respuesta representa el cuerpo JSON que retornan los controladores.
+// Respuesta representa el cuerpo JSON que retornan los controladores, tanto
+// en las respuestas exitosas como en las de error (customerror).
 type Respuesta struct {
 	Success bool
 	Status  string
 	Message string
+	Total   *int64 // solo en las respuestas de GetAll
 	Data    interface{}
 }
 
@@ -39,24 +41,48 @@ func JSON(t *testing.T, v interface{}) string {
 	return string(b)
 }
 
-// VerificarRespuesta comprueba el código HTTP de la respuesta y, cuando es
-// exitosa, decodifica y retorna su cuerpo.
-func VerificarRespuesta(t *testing.T, w *httptest.ResponseRecorder, estadoEsperado int) *Respuesta {
+// decodificar verifica el código HTTP y decodifica el cuerpo de la respuesta.
+func decodificar(t *testing.T, w *httptest.ResponseRecorder, estadoEsperado int) *Respuesta {
 	t.Helper()
 	if w.Code != estadoEsperado {
 		t.Fatalf("Se esperaba el estado %d y se obtuvo %d: %s", estadoEsperado, w.Code, w.Body.String())
-	}
-	if estadoEsperado >= http.StatusBadRequest {
-		return nil
 	}
 	var r Respuesta
 	if err := json.Unmarshal(w.Body.Bytes(), &r); err != nil {
 		t.Fatal("La respuesta no es un JSON válido:", err, w.Body.String())
 	}
-	if !r.Success || r.Status != strconv.Itoa(estadoEsperado) {
-		t.Error("Se esperaba Success=true y Status", estadoEsperado, "y se obtuvo", r.Success, r.Status)
+	if r.Status != strconv.Itoa(estadoEsperado) {
+		t.Error("Se esperaba Status", estadoEsperado, "y se obtuvo", r.Status)
 	}
 	return &r
+}
+
+// VerificarRespuesta comprueba que la respuesta sea exitosa con el código
+// HTTP esperado y retorna su cuerpo.
+func VerificarRespuesta(t *testing.T, w *httptest.ResponseRecorder, estadoEsperado int) *Respuesta {
+	t.Helper()
+	r := decodificar(t, w, estadoEsperado)
+	if !r.Success {
+		t.Error("Se esperaba Success=true y se obtuvo", r.Success)
+	}
+	return r
+}
+
+// VerificarError comprueba que la respuesta sea un error con el código HTTP
+// esperado, con la estructura de customerror y con un mensaje que contenga
+// mensajeEsperado.
+func VerificarError(t *testing.T, w *httptest.ResponseRecorder, estadoEsperado int, mensajeEsperado string) {
+	t.Helper()
+	if estadoEsperado < http.StatusBadRequest {
+		t.Fatal("VerificarError solo aplica a códigos de error, se recibió", estadoEsperado)
+	}
+	r := decodificar(t, w, estadoEsperado)
+	if r.Success || r.Data != nil {
+		t.Error("Se esperaba Success=false y Data=null y se obtuvo", r.Success, r.Data)
+	}
+	if !strings.Contains(r.Message, mensajeEsperado) {
+		t.Errorf("Se esperaba un mensaje que contenga %q y se obtuvo %q", mensajeEsperado, r.Message)
+	}
 }
 
 // Dato retorna el campo Data de la respuesta como un mapa.
@@ -69,6 +95,16 @@ func (r *Respuesta) Dato(t *testing.T) map[string]interface{} {
 	return m
 }
 
+// Lista retorna el campo Data de la respuesta como una lista.
+func (r *Respuesta) Lista(t *testing.T) []interface{} {
+	t.Helper()
+	l, ok := r.Data.([]interface{})
+	if !ok {
+		t.Fatal("Se esperaba una lista en Data y se obtuvo", r.Data)
+	}
+	return l
+}
+
 // IdDato retorna el Id del objeto contenido en Data.
 func (r *Respuesta) IdDato(t *testing.T) int {
 	t.Helper()
@@ -77,40 +113,4 @@ func (r *Respuesta) IdDato(t *testing.T) int {
 		t.Fatal("La respuesta no contiene Id:", r.Data)
 	}
 	return int(id)
-}
-
-// ProbarGetAllController verifica el comportamiento común del servicio GetAll
-// de un controlador, cuya ruta base es ruta (p. ej. /v1/perfil).
-func ProbarGetAllController(t *testing.T, ruta string, idExistente int) {
-	t.Helper()
-	id := strconv.Itoa(idExistente)
-
-	t.Run("ConParametros", func(t *testing.T) {
-		w := Peticion("GET", ruta+"/?query=Id:"+id+"&fields=Id,Activo&sortby=Id&order=desc&limit=5&offset=0", "")
-		r := VerificarRespuesta(t, w, http.StatusOK)
-		l, ok := r.Data.([]interface{})
-		if !ok || len(l) != 1 {
-			t.Fatal("Se esperaba 1 registro y se obtuvo", r.Data)
-		}
-		if m, ok := l[0].(map[string]interface{}); !ok || m["Id"] != float64(idExistente) {
-			t.Error("Se esperaba el registro", id, "y se obtuvo", l[0])
-		}
-	})
-
-	t.Run("SinResultados", func(t *testing.T) {
-		w := Peticion("GET", ruta+"/?query=Id:"+strconv.Itoa(IdInexistente), "")
-		r := VerificarRespuesta(t, w, http.StatusOK)
-		l, ok := r.Data.([]interface{})
-		if !ok || len(l) != 1 {
-			t.Error("Se esperaba una lista con un objeto vacío y se obtuvo", r.Data)
-		}
-	})
-
-	t.Run("QueryInvalido", func(t *testing.T) {
-		VerificarRespuesta(t, Peticion("GET", ruta+"/?query=Id", ""), http.StatusBadRequest)
-	})
-
-	t.Run("OrdenInvalido", func(t *testing.T) {
-		VerificarRespuesta(t, Peticion("GET", ruta+"/?sortby=Id&order=abc", ""), http.StatusNotFound)
-	})
 }

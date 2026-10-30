@@ -35,6 +35,7 @@ func TestGetRepresentacionById(t *testing.T) {
 
 func TestGetAllRepresentacion(t *testing.T) {
 	creado := helpers.CrearRepresentacion(t)
+	helpers.CrearRepresentacion(t) // el total debe superar el limit de las pruebas
 	helpers.ProbarGetAll(t, models.GetAllRepresentacion, creado.Id)
 	t.Log("TestGetAllRepresentacion Finalizado Correctamente (OK)")
 }

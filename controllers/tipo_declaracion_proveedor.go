@@ -7,7 +7,6 @@ import (
 
 	"github.com/udistrital/gestion_personas_crud/models"
 
-	beeLogger "github.com/beego/bee/v2/logger"
 	beego "github.com/beego/beego/v2/server/web"
 )
 
@@ -29,114 +28,133 @@ func (c *TipoDeclaracionProveedorController) URLMapping() {
 // @Title Post
 // @Description create TipoDeclaracionProveedor
 // @Param	body		body 	models.TipoDeclaracionProveedor	true		"body for TipoDeclaracionProveedor content"
-// @Success 201 {int} models.TipoDeclaracionProveedor
-// @Failure 400 the request contains incorrect syntax
+// @Success 201 {object} controllers.APIResponse
+// @Failure 400 body o datos invalidos
 // @router / [post]
 func (c *TipoDeclaracionProveedorController) Post() {
 	var v models.TipoDeclaracionProveedor
-	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &v); err == nil {
-		if _, err := models.AddTipoDeclaracionProveedor(&v); err == nil {
-			c.Ctx.Output.SetStatus(201)
-			c.Data["json"] = map[string]interface{}{"Success": true, "Status": "201", "Message": "Registration successful", "Data": v}
-		} else {
-			beeLogger.Log.Error(err.Error())
-			c.Data["message"] = "Error service POST: The request contains an incorrect data type or an invalid parameter"
-			c.Abort("400")
-		}
-	} else {
-		beeLogger.Log.Error(err.Error())
-		c.Data["message"] = "Error service POST: The request contains an incorrect data type or an invalid parameter"
-		c.Abort("400")
+	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &v); err != nil {
+		abortWithError(&c.Controller, 400, "cuerpo de la solicitud invalido", err)
+		return
 	}
-	c.ServeJSON()
+
+	if _, err := models.AddTipoDeclaracionProveedor(&v); err != nil {
+		abortWithDBError(&c.Controller, 400, "error al crear el registro", err)
+		return
+	}
+
+	writeSuccess(&c.Controller, 201, "registro creado", v)
 }
 
 // GetOne ...
 // @Title Get One
 // @Description get TipoDeclaracionProveedor by id
-// @Param	id		path 	string	true		"The key for staticblock"
-// @Success 200 {object} models.TipoDeclaracionProveedor
-// @Failure 404 not found resource
+// @Param	id		path 	string	true		"The id"
+// @Param	activo	query	bool	false	"Registros activos (true, predeterminado) o inactivos (false)"
+// @Success 200 {object} controllers.APIResponse
+// @Failure 404 id invalido o registro inexistente
 // @router /:id [get]
 func (c *TipoDeclaracionProveedorController) GetOne() {
-	idStr := c.Ctx.Input.Param(":id")
-	id, _ := strconv.Atoi(idStr)
-	v, err := models.GetTipoDeclaracionProveedorById(id)
+	id, err := strconv.Atoi(c.Ctx.Input.Param(":id"))
 	if err != nil {
-		beeLogger.Log.Error(err.Error())
-		c.Data["message"] = "Error service GetOne: The request contains an incorrect parameter or no record exists"
-		c.Abort("404")
-	} else {
-		c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Request successful", "Data": v}
+		abortWithError(&c.Controller, 404, "el parametro id debe ser numerico", err)
+		return
 	}
-	c.ServeJSON()
+
+	activo, err := leerActivo(&c.Controller)
+	if err != nil {
+		abortWithError(&c.Controller, 404, err.Error(), nil)
+		return
+	}
+
+	v, err := models.GetTipoDeclaracionProveedorById(id)
+	if err != nil || v.Activo != activo {
+		abortWithError(&c.Controller, 404, "registro no encontrado", err)
+		return
+	}
+
+	writeSuccess(&c.Controller, 200, "consulta exitosa", v)
 }
 
 // GetAll ...
 // @Title Get All
-// @Description get TipoDeclaracionProveedor
+// @Description get TipoDeclaracionProveedor. Total es la cantidad de registros que cumplen los filtros, sin limit ni offset; Data contiene los registros de la pagina
 // @Param	query	query	string	false	"Filter. e.g. col1:v1,col2:v2 ..."
 // @Param	fields	query	string	false	"Fields returned. e.g. col1,col2 ..."
 // @Param	sortby	query	string	false	"Sorted-by fields. e.g. col1,col2 ..."
-// @Param	order	query	string	false	"Order corresponding to each sortby field, if single value, apply to all sortby fields. e.g. desc,asc ..."
+// @Param	order	query	string	false	"Order corresponding to each sortby field. e.g. desc,asc ..."
 // @Param	limit	query	string	false	"Limit the size of result set. Must be an integer"
 // @Param	offset	query	string	false	"Start position of result set. Must be an integer"
-// @Success 200 {object} models.TipoDeclaracionProveedor
-// @Failure 404 not found resource
+// @Param	activo	query	bool	false	"Registros activos (true, predeterminado) o inactivos (false)"
+// @Success 200 {object} controllers.APIResponseLista
+// @Failure 400 parametros invalidos
+// @Failure 404 error al consultar los registros
 // @router / [get]
 func (c *TipoDeclaracionProveedorController) GetAll() {
 	var fields []string
 	var sortby []string
 	var order []string
-	var query = make(map[string]string)
-	var limit int64 = 10
-	var offset int64
+	query := make(map[string]string)
+	limit := int64(10)
+	offset := int64(0)
 
-	// fields: col1,col2,entity.col3
 	if v := c.GetString("fields"); v != "" {
 		fields = strings.Split(v, ",")
 	}
-	// limit: 10 (default is 10)
-	if v, err := c.GetInt64("limit"); err == nil {
-		limit = v
+
+	if v := c.GetString("limit"); v != "" {
+		parsedLimit, err := strconv.ParseInt(v, 10, 64)
+		if err != nil || parsedLimit < 0 {
+			abortWithError(&c.Controller, 400, "el parametro limit debe ser un entero mayor o igual a cero", err)
+			return
+		}
+		limit = parsedLimit
 	}
-	// offset: 0 (default is 0)
-	if v, err := c.GetInt64("offset"); err == nil {
-		offset = v
+
+	if v := c.GetString("offset"); v != "" {
+		parsedOffset, err := strconv.ParseInt(v, 10, 64)
+		if err != nil || parsedOffset < 0 {
+			abortWithError(&c.Controller, 400, "el parametro offset debe ser un entero mayor o igual a cero", err)
+			return
+		}
+		offset = parsedOffset
 	}
-	// sortby: col1,col2
+
 	if v := c.GetString("sortby"); v != "" {
 		sortby = strings.Split(v, ",")
 	}
-	// order: desc,asc
+
 	if v := c.GetString("order"); v != "" {
 		order = strings.Split(v, ",")
 	}
-	// query: k:v,k:v
+
 	if v := c.GetString("query"); v != "" {
 		for _, cond := range strings.Split(v, ",") {
 			kv := strings.SplitN(cond, ":", 2)
 			if len(kv) != 2 {
-				c.Data["message"] = "Error service GetAll: invalid query parameter. Expected format: query=campo:valor,campo2:valor2"
-				c.Abort("400")
+				abortWithError(&c.Controller, 400, "query invalida, use formato campo:valor", nil)
+				return
 			}
-			k, v := kv[0], kv[1]
-			query[k] = v
+			query[kv[0]] = kv[1]
 		}
 	}
 
-	l, err := models.GetAllTipoDeclaracionProveedor(query, fields, sortby, order, offset, limit)
-	if err != nil {
-		beeLogger.Log.Error(err.Error())
-		c.Data["message"] = "Error service GetAll: The request contains an incorrect parameter or no record exists"
-		c.Abort("404")
-	} else {
-		if l == nil {
-			l = append(l, map[string]interface{}{})
-		}
-		c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Request successful", "Data": l}
+	if err := agregarFiltroActivo(&c.Controller, query); err != nil {
+		abortWithError(&c.Controller, 400, err.Error(), nil)
+		return
 	}
-	c.ServeJSON()
+
+	l, total, err := models.GetAllTipoDeclaracionProveedor(query, fields, sortby, order, offset, limit)
+	if err != nil {
+		abortWithError(&c.Controller, 404, "error al consultar los registros", err)
+		return
+	}
+
+	if l == nil {
+		l = append(l, map[string]interface{}{})
+	}
+
+	writeSuccessLista(&c.Controller, "consulta exitosa", total, l)
 }
 
 // Put ...
@@ -144,54 +162,53 @@ func (c *TipoDeclaracionProveedorController) GetAll() {
 // @Description update the TipoDeclaracionProveedor
 // @Param	id		path 	string	true		"The id you want to update"
 // @Param	body		body 	models.TipoDeclaracionProveedor	true		"body for TipoDeclaracionProveedor content"
-// @Success 200 {object} models.TipoDeclaracionProveedor
-// @Failure 400 the request contains incorrect syntax
+// @Success 200 {object} controllers.APIResponse
+// @Failure 400 id, body o datos invalidos, Id distinto al de la ruta o registro inexistente
 // @router /:id [put]
 func (c *TipoDeclaracionProveedorController) Put() {
-	idStr := c.Ctx.Input.Param(":id")
-	id, _ := strconv.Atoi(idStr)
-	v := models.TipoDeclaracionProveedor{Id: id}
-	var m models.TipoDeclaracionProveedor
-	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &m); err == nil {
-		if m.Id != 0 && m.Id != v.Id {
-			c.Data["message"] = "Error service Put: The id cannot be modified"
-			c.Abort("400")
-		}
-		if m.Id == 0 {
-			m.Id = v.Id
-		}
-		if err := models.UpdateTipoDeclaracionProveedorById(&m); err == nil {
-			c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Update successful", "Data": m}
-		} else {
-			beeLogger.Log.Error(err.Error())
-			c.Data["message"] = "Error service Put: The request contains an incorrect data type or an invalid parameter"
-			c.Abort("400")
-		}
-	} else {
-		beeLogger.Log.Error(err.Error())
-		c.Data["message"] = "Error service Put: The request contains an incorrect data type or an invalid parameter"
-		c.Abort("400")
+	id, err := strconv.Atoi(c.Ctx.Input.Param(":id"))
+	if err != nil {
+		abortWithError(&c.Controller, 400, "el parametro id debe ser numerico", err)
+		return
 	}
-	c.ServeJSON()
+
+	var v models.TipoDeclaracionProveedor
+	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &v); err != nil {
+		abortWithError(&c.Controller, 400, "cuerpo de la solicitud invalido", err)
+		return
+	}
+	if v.Id != 0 && v.Id != id {
+		abortWithError(&c.Controller, 400, "el Id del cuerpo no coincide con el id de la ruta", nil)
+		return
+	}
+	v.Id = id
+
+	if err := models.UpdateTipoDeclaracionProveedorById(&v); err != nil {
+		abortWithDBError(&c.Controller, 400, "error al actualizar el registro", err)
+		return
+	}
+
+	writeSuccess(&c.Controller, 200, "registro actualizado", v)
 }
 
 // Delete ...
 // @Title Delete
 // @Description delete the TipoDeclaracionProveedor
 // @Param	id		path 	string	true		"The id you want to delete"
-// @Success 200 {string} delete success!
-// @Failure 404 not found resource
+// @Success 200 {object} controllers.APIResponse
+// @Failure 404 id invalido o registro inexistente
 // @router /:id [delete]
 func (c *TipoDeclaracionProveedorController) Delete() {
-	idStr := c.Ctx.Input.Param(":id")
-	id, _ := strconv.Atoi(idStr)
-	if err := models.DeleteTipoDeclaracionProveedor(id); err == nil {
-		d := map[string]interface{}{"Id": id}
-		c.Data["json"] = map[string]interface{}{"Success": true, "Status": "200", "Message": "Delete successful", "Data": d}
-	} else {
-		beeLogger.Log.Error(err.Error())
-		c.Data["message"] = "Error service Delete: Request contains incorrect parameter"
-		c.Abort("404")
+	id, err := strconv.Atoi(c.Ctx.Input.Param(":id"))
+	if err != nil {
+		abortWithError(&c.Controller, 404, "el parametro id debe ser numerico", err)
+		return
 	}
-	c.ServeJSON()
+
+	if err := models.DeleteTipoDeclaracionProveedor(id); err != nil {
+		abortWithDBError(&c.Controller, 404, "error al eliminar el registro", err)
+		return
+	}
+
+	writeSuccess(&c.Controller, 200, "registro eliminado", map[string]interface{}{"Id": id})
 }
