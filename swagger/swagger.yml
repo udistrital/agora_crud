@@ -17,7 +17,7 @@ paths:
       tags:
       - actividad_economica_proveedor
       description: |-
-        get ActividadEconomicaProveedor. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
+        get ActividadEconomicaProveedor. Total es la cantidad de registros que cumplen los filtros, sin limit ni offset; Data contiene los registros de la pagina
         <br>
       operationId: ActividadEconomicaProveedorController.Get All
       parameters:
@@ -35,8 +35,7 @@ paths:
         type: string
       - in: query
         name: order
-        description: Order corresponding to each sortby field, if single value, apply
-          to all sortby fields. e.g. desc,asc ...
+        description: Order corresponding to each sortby field. e.g. desc,asc ...
         type: string
       - in: query
         name: limit
@@ -46,13 +45,19 @@ paths:
         name: offset
         description: Start position of result set. Must be an integer
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.ActividadEconomicaProveedor'
+            $ref: '#/definitions/controllers.APIResponseLista'
+        "400":
+          description: parametros invalidos
         "404":
-          description: not found resource
+          description: error al consultar los registros
     post:
       tags:
       - actividad_economica_proveedor
@@ -69,9 +74,11 @@ paths:
           $ref: '#/definitions/models.ActividadEconomicaProveedor'
       responses:
         "201":
-          description: '{int} models.ActividadEconomicaProveedor'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: body o datos invalidos
   /actividad_economica_proveedor/{id}:
     get:
       tags:
@@ -83,16 +90,20 @@ paths:
       parameters:
       - in: path
         name: id
-        description: The key for staticblock
+        description: The id
         required: true
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.ActividadEconomicaProveedor'
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
     put:
       tags:
       - actividad_economica_proveedor
@@ -116,9 +127,10 @@ paths:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.ActividadEconomicaProveedor'
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: id, body o datos invalidos, Id distinto al de la ruta o registro
+            inexistente
     delete:
       tags:
       - actividad_economica_proveedor
@@ -134,15 +146,17 @@ paths:
         type: string
       responses:
         "200":
-          description: '{string} delete success!'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
   /contacto/:
     get:
       tags:
       - contacto
       description: |-
-        get Contacto. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
+        get Contacto. Total es la cantidad de registros que cumplen los filtros, sin limit ni offset; Data contiene los registros de la pagina
         <br>
       operationId: ContactoController.Get All
       parameters:
@@ -160,8 +174,7 @@ paths:
         type: string
       - in: query
         name: order
-        description: Order corresponding to each sortby field, if single value, apply
-          to all sortby fields. e.g. desc,asc ...
+        description: Order corresponding to each sortby field. e.g. desc,asc ...
         type: string
       - in: query
         name: limit
@@ -171,13 +184,19 @@ paths:
         name: offset
         description: Start position of result set. Must be an integer
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.Contacto'
+            $ref: '#/definitions/controllers.APIResponseLista'
+        "400":
+          description: parametros invalidos
         "404":
-          description: not found resource
+          description: error al consultar los registros
     post:
       tags:
       - contacto
@@ -194,9 +213,11 @@ paths:
           $ref: '#/definitions/models.Contacto'
       responses:
         "201":
-          description: '{int} models.Contacto'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: body o datos invalidos
   /contacto/{id}:
     get:
       tags:
@@ -208,16 +229,20 @@ paths:
       parameters:
       - in: path
         name: id
-        description: The key for staticblock
+        description: The id
         required: true
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.Contacto'
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
     put:
       tags:
       - contacto
@@ -241,9 +266,10 @@ paths:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.Contacto'
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: id, body o datos invalidos, Id distinto al de la ruta o registro
+            inexistente
     delete:
       tags:
       - contacto
@@ -259,15 +285,17 @@ paths:
         type: string
       responses:
         "200":
-          description: '{string} delete success!'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
   /cuenta_bancaria/:
     get:
       tags:
       - cuenta_bancaria
       description: |-
-        get CuentaBancaria. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
+        get CuentaBancaria. Total es la cantidad de registros que cumplen los filtros, sin limit ni offset; Data contiene los registros de la pagina
         <br>
       operationId: CuentaBancariaController.Get All
       parameters:
@@ -285,8 +313,7 @@ paths:
         type: string
       - in: query
         name: order
-        description: Order corresponding to each sortby field, if single value, apply
-          to all sortby fields. e.g. desc,asc ...
+        description: Order corresponding to each sortby field. e.g. desc,asc ...
         type: string
       - in: query
         name: limit
@@ -296,13 +323,19 @@ paths:
         name: offset
         description: Start position of result set. Must be an integer
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.CuentaBancaria'
+            $ref: '#/definitions/controllers.APIResponseLista'
+        "400":
+          description: parametros invalidos
         "404":
-          description: not found resource
+          description: error al consultar los registros
     post:
       tags:
       - cuenta_bancaria
@@ -319,9 +352,11 @@ paths:
           $ref: '#/definitions/models.CuentaBancaria'
       responses:
         "201":
-          description: '{int} models.CuentaBancaria'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: body o datos invalidos
   /cuenta_bancaria/{id}:
     get:
       tags:
@@ -333,16 +368,20 @@ paths:
       parameters:
       - in: path
         name: id
-        description: The key for staticblock
+        description: The id
         required: true
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.CuentaBancaria'
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
     put:
       tags:
       - cuenta_bancaria
@@ -366,9 +405,10 @@ paths:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.CuentaBancaria'
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: id, body o datos invalidos, Id distinto al de la ruta o registro
+            inexistente
     delete:
       tags:
       - cuenta_bancaria
@@ -384,15 +424,17 @@ paths:
         type: string
       responses:
         "200":
-          description: '{string} delete success!'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
   /declaracion/:
     get:
       tags:
       - declaracion
       description: |-
-        get Declaracion. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
+        get Declaracion. Total es la cantidad de registros que cumplen los filtros, sin limit ni offset; Data contiene los registros de la pagina
         <br>
       operationId: DeclaracionController.Get All
       parameters:
@@ -410,8 +452,7 @@ paths:
         type: string
       - in: query
         name: order
-        description: Order corresponding to each sortby field, if single value, apply
-          to all sortby fields. e.g. desc,asc ...
+        description: Order corresponding to each sortby field. e.g. desc,asc ...
         type: string
       - in: query
         name: limit
@@ -421,13 +462,19 @@ paths:
         name: offset
         description: Start position of result set. Must be an integer
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.Declaracion'
+            $ref: '#/definitions/controllers.APIResponseLista'
+        "400":
+          description: parametros invalidos
         "404":
-          description: not found resource
+          description: error al consultar los registros
     post:
       tags:
       - declaracion
@@ -444,9 +491,11 @@ paths:
           $ref: '#/definitions/models.Declaracion'
       responses:
         "201":
-          description: '{int} models.Declaracion'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: body o datos invalidos
   /declaracion/{id}:
     get:
       tags:
@@ -458,16 +507,20 @@ paths:
       parameters:
       - in: path
         name: id
-        description: The key for staticblock
+        description: The id
         required: true
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.Declaracion'
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
     put:
       tags:
       - declaracion
@@ -491,9 +544,10 @@ paths:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.Declaracion'
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: id, body o datos invalidos, Id distinto al de la ruta o registro
+            inexistente
     delete:
       tags:
       - declaracion
@@ -509,15 +563,17 @@ paths:
         type: string
       responses:
         "200":
-          description: '{string} delete success!'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
   /documento/:
     get:
       tags:
       - documento
       description: |-
-        get Documento. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
+        get Documento. Total es la cantidad de registros que cumplen los filtros, sin limit ni offset; Data contiene los registros de la pagina
         <br>
       operationId: DocumentoController.Get All
       parameters:
@@ -535,8 +591,7 @@ paths:
         type: string
       - in: query
         name: order
-        description: Order corresponding to each sortby field, if single value, apply
-          to all sortby fields. e.g. desc,asc ...
+        description: Order corresponding to each sortby field. e.g. desc,asc ...
         type: string
       - in: query
         name: limit
@@ -546,13 +601,19 @@ paths:
         name: offset
         description: Start position of result set. Must be an integer
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.Documento'
+            $ref: '#/definitions/controllers.APIResponseLista'
+        "400":
+          description: parametros invalidos
         "404":
-          description: not found resource
+          description: error al consultar los registros
     post:
       tags:
       - documento
@@ -569,9 +630,11 @@ paths:
           $ref: '#/definitions/models.Documento'
       responses:
         "201":
-          description: '{int} models.Documento'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: body o datos invalidos
   /documento/{id}:
     get:
       tags:
@@ -583,16 +646,20 @@ paths:
       parameters:
       - in: path
         name: id
-        description: The key for staticblock
+        description: The id
         required: true
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.Documento'
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
     put:
       tags:
       - documento
@@ -616,9 +683,10 @@ paths:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.Documento'
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: id, body o datos invalidos, Id distinto al de la ruta o registro
+            inexistente
     delete:
       tags:
       - documento
@@ -634,15 +702,17 @@ paths:
         type: string
       responses:
         "200":
-          description: '{string} delete success!'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
   /informacion_financiera/:
     get:
       tags:
       - informacion_financiera
       description: |-
-        get InformacionFinanciera. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
+        get InformacionFinanciera. Total es la cantidad de registros que cumplen los filtros, sin limit ni offset; Data contiene los registros de la pagina
         <br>
       operationId: InformacionFinancieraController.Get All
       parameters:
@@ -660,8 +730,7 @@ paths:
         type: string
       - in: query
         name: order
-        description: Order corresponding to each sortby field, if single value, apply
-          to all sortby fields. e.g. desc,asc ...
+        description: Order corresponding to each sortby field. e.g. desc,asc ...
         type: string
       - in: query
         name: limit
@@ -671,13 +740,19 @@ paths:
         name: offset
         description: Start position of result set. Must be an integer
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.InformacionFinanciera'
+            $ref: '#/definitions/controllers.APIResponseLista'
+        "400":
+          description: parametros invalidos
         "404":
-          description: not found resource
+          description: error al consultar los registros
     post:
       tags:
       - informacion_financiera
@@ -694,9 +769,11 @@ paths:
           $ref: '#/definitions/models.InformacionFinanciera'
       responses:
         "201":
-          description: '{int} models.InformacionFinanciera'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: body o datos invalidos
   /informacion_financiera/{id}:
     get:
       tags:
@@ -708,16 +785,20 @@ paths:
       parameters:
       - in: path
         name: id
-        description: The key for staticblock
+        description: The id
         required: true
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.InformacionFinanciera'
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
     put:
       tags:
       - informacion_financiera
@@ -741,9 +822,10 @@ paths:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.InformacionFinanciera'
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: id, body o datos invalidos, Id distinto al de la ruta o registro
+            inexistente
     delete:
       tags:
       - informacion_financiera
@@ -759,15 +841,17 @@ paths:
         type: string
       responses:
         "200":
-          description: '{string} delete success!'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
   /perfil/:
     get:
       tags:
       - perfil
       description: |-
-        get Perfil. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
+        get Perfil. Total es la cantidad de registros que cumplen los filtros, sin limit ni offset; Data contiene los registros de la pagina
         <br>
       operationId: PerfilController.Get All
       parameters:
@@ -785,8 +869,7 @@ paths:
         type: string
       - in: query
         name: order
-        description: Order corresponding to each sortby field, if single value, apply
-          to all sortby fields. e.g. desc,asc ...
+        description: Order corresponding to each sortby field. e.g. desc,asc ...
         type: string
       - in: query
         name: limit
@@ -796,13 +879,19 @@ paths:
         name: offset
         description: Start position of result set. Must be an integer
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.Perfil'
+            $ref: '#/definitions/controllers.APIResponseLista'
+        "400":
+          description: parametros invalidos
         "404":
-          description: not found resource
+          description: error al consultar los registros
     post:
       tags:
       - perfil
@@ -819,9 +908,11 @@ paths:
           $ref: '#/definitions/models.Perfil'
       responses:
         "201":
-          description: '{int} models.Perfil'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: body o datos invalidos
   /perfil/{id}:
     get:
       tags:
@@ -833,16 +924,20 @@ paths:
       parameters:
       - in: path
         name: id
-        description: The key for staticblock
+        description: The id
         required: true
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.Perfil'
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
     put:
       tags:
       - perfil
@@ -866,9 +961,10 @@ paths:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.Perfil'
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: id, body o datos invalidos, Id distinto al de la ruta o registro
+            inexistente
     delete:
       tags:
       - perfil
@@ -884,15 +980,17 @@ paths:
         type: string
       responses:
         "200":
-          description: '{string} delete success!'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
   /perfil_financiero/:
     get:
       tags:
       - perfil_financiero
       description: |-
-        get PerfilFinanciero. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
+        get PerfilFinanciero. Total es la cantidad de registros que cumplen los filtros, sin limit ni offset; Data contiene los registros de la pagina
         <br>
       operationId: PerfilFinancieroController.Get All
       parameters:
@@ -910,8 +1008,7 @@ paths:
         type: string
       - in: query
         name: order
-        description: Order corresponding to each sortby field, if single value, apply
-          to all sortby fields. e.g. desc,asc ...
+        description: Order corresponding to each sortby field. e.g. desc,asc ...
         type: string
       - in: query
         name: limit
@@ -921,13 +1018,19 @@ paths:
         name: offset
         description: Start position of result set. Must be an integer
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.PerfilFinanciero'
+            $ref: '#/definitions/controllers.APIResponseLista'
+        "400":
+          description: parametros invalidos
         "404":
-          description: not found resource
+          description: error al consultar los registros
     post:
       tags:
       - perfil_financiero
@@ -944,9 +1047,11 @@ paths:
           $ref: '#/definitions/models.PerfilFinanciero'
       responses:
         "201":
-          description: '{int} models.PerfilFinanciero'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: body o datos invalidos
   /perfil_financiero/{id}:
     get:
       tags:
@@ -958,16 +1063,20 @@ paths:
       parameters:
       - in: path
         name: id
-        description: The key for staticblock
+        description: The id
         required: true
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.PerfilFinanciero'
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
     put:
       tags:
       - perfil_financiero
@@ -991,9 +1100,10 @@ paths:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.PerfilFinanciero'
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: id, body o datos invalidos, Id distinto al de la ruta o registro
+            inexistente
     delete:
       tags:
       - perfil_financiero
@@ -1009,15 +1119,17 @@ paths:
         type: string
       responses:
         "200":
-          description: '{string} delete success!'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
   /prefijo_facturacion/:
     get:
       tags:
       - prefijo_facturacion
       description: |-
-        get PrefijoFacturacion. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
+        get PrefijoFacturacion. Total es la cantidad de registros que cumplen los filtros, sin limit ni offset; Data contiene los registros de la pagina
         <br>
       operationId: PrefijoFacturacionController.Get All
       parameters:
@@ -1035,8 +1147,7 @@ paths:
         type: string
       - in: query
         name: order
-        description: Order corresponding to each sortby field, if single value, apply
-          to all sortby fields. e.g. desc,asc ...
+        description: Order corresponding to each sortby field. e.g. desc,asc ...
         type: string
       - in: query
         name: limit
@@ -1046,13 +1157,19 @@ paths:
         name: offset
         description: Start position of result set. Must be an integer
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.PrefijoFacturacion'
+            $ref: '#/definitions/controllers.APIResponseLista'
+        "400":
+          description: parametros invalidos
         "404":
-          description: not found resource
+          description: error al consultar los registros
     post:
       tags:
       - prefijo_facturacion
@@ -1069,9 +1186,11 @@ paths:
           $ref: '#/definitions/models.PrefijoFacturacion'
       responses:
         "201":
-          description: '{int} models.PrefijoFacturacion'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: body o datos invalidos
   /prefijo_facturacion/{id}:
     get:
       tags:
@@ -1083,16 +1202,20 @@ paths:
       parameters:
       - in: path
         name: id
-        description: The key for staticblock
+        description: The id
         required: true
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.PrefijoFacturacion'
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
     put:
       tags:
       - prefijo_facturacion
@@ -1116,9 +1239,10 @@ paths:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.PrefijoFacturacion'
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: id, body o datos invalidos, Id distinto al de la ruta o registro
+            inexistente
     delete:
       tags:
       - prefijo_facturacion
@@ -1134,15 +1258,17 @@ paths:
         type: string
       responses:
         "200":
-          description: '{string} delete success!'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
   /proveedor/:
     get:
       tags:
       - proveedor
       description: |-
-        get Proveedor. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
+        get Proveedor. Total es la cantidad de registros que cumplen los filtros, sin limit ni offset; Data contiene los registros de la pagina
         <br>
       operationId: ProveedorController.Get All
       parameters:
@@ -1160,8 +1286,7 @@ paths:
         type: string
       - in: query
         name: order
-        description: Order corresponding to each sortby field, if single value, apply
-          to all sortby fields. e.g. desc,asc ...
+        description: Order corresponding to each sortby field. e.g. desc,asc ...
         type: string
       - in: query
         name: limit
@@ -1171,13 +1296,19 @@ paths:
         name: offset
         description: Start position of result set. Must be an integer
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.Proveedor'
+            $ref: '#/definitions/controllers.APIResponseLista'
+        "400":
+          description: parametros invalidos
         "404":
-          description: not found resource
+          description: error al consultar los registros
     post:
       tags:
       - proveedor
@@ -1194,9 +1325,11 @@ paths:
           $ref: '#/definitions/models.Proveedor'
       responses:
         "201":
-          description: '{int} models.Proveedor'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: body o datos invalidos
   /proveedor/{id}:
     get:
       tags:
@@ -1208,16 +1341,20 @@ paths:
       parameters:
       - in: path
         name: id
-        description: The key for staticblock
+        description: The id
         required: true
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.Proveedor'
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
     put:
       tags:
       - proveedor
@@ -1241,9 +1378,10 @@ paths:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.Proveedor'
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: id, body o datos invalidos, Id distinto al de la ruta o registro
+            inexistente
     delete:
       tags:
       - proveedor
@@ -1259,15 +1397,17 @@ paths:
         type: string
       responses:
         "200":
-          description: '{string} delete success!'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
   /proveedor_juridico/:
     get:
       tags:
       - proveedor_juridico
       description: |-
-        get ProveedorJuridico. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
+        get ProveedorJuridico. Total es la cantidad de registros que cumplen los filtros, sin limit ni offset; Data contiene los registros de la pagina
         <br>
       operationId: ProveedorJuridicoController.Get All
       parameters:
@@ -1285,8 +1425,7 @@ paths:
         type: string
       - in: query
         name: order
-        description: Order corresponding to each sortby field, if single value, apply
-          to all sortby fields. e.g. desc,asc ...
+        description: Order corresponding to each sortby field. e.g. desc,asc ...
         type: string
       - in: query
         name: limit
@@ -1296,13 +1435,19 @@ paths:
         name: offset
         description: Start position of result set. Must be an integer
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.ProveedorJuridico'
+            $ref: '#/definitions/controllers.APIResponseLista'
+        "400":
+          description: parametros invalidos
         "404":
-          description: not found resource
+          description: error al consultar los registros
     post:
       tags:
       - proveedor_juridico
@@ -1319,9 +1464,11 @@ paths:
           $ref: '#/definitions/models.ProveedorJuridico'
       responses:
         "201":
-          description: '{int} models.ProveedorJuridico'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: body o datos invalidos
   /proveedor_juridico/{id}:
     get:
       tags:
@@ -1333,16 +1480,20 @@ paths:
       parameters:
       - in: path
         name: id
-        description: The key for staticblock
+        description: The id
         required: true
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.ProveedorJuridico'
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
     put:
       tags:
       - proveedor_juridico
@@ -1366,9 +1517,10 @@ paths:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.ProveedorJuridico'
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: id, body o datos invalidos, Id distinto al de la ruta o registro
+            inexistente
     delete:
       tags:
       - proveedor_juridico
@@ -1384,15 +1536,17 @@ paths:
         type: string
       responses:
         "200":
-          description: '{string} delete success!'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
   /proveedor_natural/:
     get:
       tags:
       - proveedor_natural
       description: |-
-        get ProveedorNatural. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
+        get ProveedorNatural. Total es la cantidad de registros que cumplen los filtros, sin limit ni offset; Data contiene los registros de la pagina
         <br>
       operationId: ProveedorNaturalController.Get All
       parameters:
@@ -1410,8 +1564,7 @@ paths:
         type: string
       - in: query
         name: order
-        description: Order corresponding to each sortby field, if single value, apply
-          to all sortby fields. e.g. desc,asc ...
+        description: Order corresponding to each sortby field. e.g. desc,asc ...
         type: string
       - in: query
         name: limit
@@ -1421,13 +1574,19 @@ paths:
         name: offset
         description: Start position of result set. Must be an integer
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.ProveedorNatural'
+            $ref: '#/definitions/controllers.APIResponseLista'
+        "400":
+          description: parametros invalidos
         "404":
-          description: not found resource
+          description: error al consultar los registros
     post:
       tags:
       - proveedor_natural
@@ -1444,9 +1603,11 @@ paths:
           $ref: '#/definitions/models.ProveedorNatural'
       responses:
         "201":
-          description: '{int} models.ProveedorNatural'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: body o datos invalidos
   /proveedor_natural/{id}:
     get:
       tags:
@@ -1458,16 +1619,20 @@ paths:
       parameters:
       - in: path
         name: id
-        description: The key for staticblock
+        description: The id
         required: true
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.ProveedorNatural'
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
     put:
       tags:
       - proveedor_natural
@@ -1491,9 +1656,10 @@ paths:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.ProveedorNatural'
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: id, body o datos invalidos, Id distinto al de la ruta o registro
+            inexistente
     delete:
       tags:
       - proveedor_natural
@@ -1509,15 +1675,17 @@ paths:
         type: string
       responses:
         "200":
-          description: '{string} delete success!'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
   /rango_facturacion/:
     get:
       tags:
       - rango_facturacion
       description: |-
-        get RangoFacturacion. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
+        get RangoFacturacion. Total es la cantidad de registros que cumplen los filtros, sin limit ni offset; Data contiene los registros de la pagina
         <br>
       operationId: RangoFacturacionController.Get All
       parameters:
@@ -1535,8 +1703,7 @@ paths:
         type: string
       - in: query
         name: order
-        description: Order corresponding to each sortby field, if single value, apply
-          to all sortby fields. e.g. desc,asc ...
+        description: Order corresponding to each sortby field. e.g. desc,asc ...
         type: string
       - in: query
         name: limit
@@ -1546,13 +1713,19 @@ paths:
         name: offset
         description: Start position of result set. Must be an integer
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.RangoFacturacion'
+            $ref: '#/definitions/controllers.APIResponseLista'
+        "400":
+          description: parametros invalidos
         "404":
-          description: not found resource
+          description: error al consultar los registros
     post:
       tags:
       - rango_facturacion
@@ -1569,9 +1742,11 @@ paths:
           $ref: '#/definitions/models.RangoFacturacion'
       responses:
         "201":
-          description: '{int} models.RangoFacturacion'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: body o datos invalidos
   /rango_facturacion/{id}:
     get:
       tags:
@@ -1583,16 +1758,20 @@ paths:
       parameters:
       - in: path
         name: id
-        description: The key for staticblock
+        description: The id
         required: true
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.RangoFacturacion'
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
     put:
       tags:
       - rango_facturacion
@@ -1616,9 +1795,10 @@ paths:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.RangoFacturacion'
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: id, body o datos invalidos, Id distinto al de la ruta o registro
+            inexistente
     delete:
       tags:
       - rango_facturacion
@@ -1634,15 +1814,17 @@ paths:
         type: string
       responses:
         "200":
-          description: '{string} delete success!'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
   /representacion/:
     get:
       tags:
       - representacion
       description: |-
-        get Representacion. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
+        get Representacion. Total es la cantidad de registros que cumplen los filtros, sin limit ni offset; Data contiene los registros de la pagina
         <br>
       operationId: RepresentacionController.Get All
       parameters:
@@ -1660,8 +1842,7 @@ paths:
         type: string
       - in: query
         name: order
-        description: Order corresponding to each sortby field, if single value, apply
-          to all sortby fields. e.g. desc,asc ...
+        description: Order corresponding to each sortby field. e.g. desc,asc ...
         type: string
       - in: query
         name: limit
@@ -1671,13 +1852,19 @@ paths:
         name: offset
         description: Start position of result set. Must be an integer
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.Representacion'
+            $ref: '#/definitions/controllers.APIResponseLista'
+        "400":
+          description: parametros invalidos
         "404":
-          description: not found resource
+          description: error al consultar los registros
     post:
       tags:
       - representacion
@@ -1694,9 +1881,11 @@ paths:
           $ref: '#/definitions/models.Representacion'
       responses:
         "201":
-          description: '{int} models.Representacion'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: body o datos invalidos
   /representacion/{id}:
     get:
       tags:
@@ -1708,16 +1897,20 @@ paths:
       parameters:
       - in: path
         name: id
-        description: The key for staticblock
+        description: The id
         required: true
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.Representacion'
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
     put:
       tags:
       - representacion
@@ -1741,9 +1934,10 @@ paths:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.Representacion'
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: id, body o datos invalidos, Id distinto al de la ruta o registro
+            inexistente
     delete:
       tags:
       - representacion
@@ -1759,15 +1953,17 @@ paths:
         type: string
       responses:
         "200":
-          description: '{string} delete success!'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
   /responsabilidad_fiscal_perfil/:
     get:
       tags:
       - responsabilidad_fiscal_perfil
       description: |-
-        get ResponsabilidadFiscalPerfil. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
+        get ResponsabilidadFiscalPerfil. Total es la cantidad de registros que cumplen los filtros, sin limit ni offset; Data contiene los registros de la pagina
         <br>
       operationId: ResponsabilidadFiscalPerfilController.Get All
       parameters:
@@ -1785,8 +1981,7 @@ paths:
         type: string
       - in: query
         name: order
-        description: Order corresponding to each sortby field, if single value, apply
-          to all sortby fields. e.g. desc,asc ...
+        description: Order corresponding to each sortby field. e.g. desc,asc ...
         type: string
       - in: query
         name: limit
@@ -1796,13 +1991,19 @@ paths:
         name: offset
         description: Start position of result set. Must be an integer
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.ResponsabilidadFiscalPerfil'
+            $ref: '#/definitions/controllers.APIResponseLista'
+        "400":
+          description: parametros invalidos
         "404":
-          description: not found resource
+          description: error al consultar los registros
     post:
       tags:
       - responsabilidad_fiscal_perfil
@@ -1819,9 +2020,11 @@ paths:
           $ref: '#/definitions/models.ResponsabilidadFiscalPerfil'
       responses:
         "201":
-          description: '{int} models.ResponsabilidadFiscalPerfil'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: body o datos invalidos
   /responsabilidad_fiscal_perfil/{id}:
     get:
       tags:
@@ -1833,16 +2036,20 @@ paths:
       parameters:
       - in: path
         name: id
-        description: The key for staticblock
+        description: The id
         required: true
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.ResponsabilidadFiscalPerfil'
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
     put:
       tags:
       - responsabilidad_fiscal_perfil
@@ -1866,9 +2073,10 @@ paths:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.ResponsabilidadFiscalPerfil'
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: id, body o datos invalidos, Id distinto al de la ruta o registro
+            inexistente
     delete:
       tags:
       - responsabilidad_fiscal_perfil
@@ -1884,15 +2092,17 @@ paths:
         type: string
       responses:
         "200":
-          description: '{string} delete success!'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
   /tipo_declaracion_proveedor/:
     get:
       tags:
       - tipo_declaracion_proveedor
       description: |-
-        get TipoDeclaracionProveedor. La respuesta incluye Total: cantidad de registros que cumplen los filtros, sin limit ni offset
+        get TipoDeclaracionProveedor. Total es la cantidad de registros que cumplen los filtros, sin limit ni offset; Data contiene los registros de la pagina
         <br>
       operationId: TipoDeclaracionProveedorController.Get All
       parameters:
@@ -1910,8 +2120,7 @@ paths:
         type: string
       - in: query
         name: order
-        description: Order corresponding to each sortby field, if single value, apply
-          to all sortby fields. e.g. desc,asc ...
+        description: Order corresponding to each sortby field. e.g. desc,asc ...
         type: string
       - in: query
         name: limit
@@ -1921,13 +2130,19 @@ paths:
         name: offset
         description: Start position of result set. Must be an integer
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.TipoDeclaracionProveedor'
+            $ref: '#/definitions/controllers.APIResponseLista'
+        "400":
+          description: parametros invalidos
         "404":
-          description: not found resource
+          description: error al consultar los registros
     post:
       tags:
       - tipo_declaracion_proveedor
@@ -1944,9 +2159,11 @@ paths:
           $ref: '#/definitions/models.TipoDeclaracionProveedor'
       responses:
         "201":
-          description: '{int} models.TipoDeclaracionProveedor'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: body o datos invalidos
   /tipo_declaracion_proveedor/{id}:
     get:
       tags:
@@ -1958,16 +2175,20 @@ paths:
       parameters:
       - in: path
         name: id
-        description: The key for staticblock
+        description: The id
         required: true
         type: string
+      - in: query
+        name: activo
+        description: Registros activos (true, predeterminado) o inactivos (false)
+        type: boolean
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.TipoDeclaracionProveedor'
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
     put:
       tags:
       - tipo_declaracion_proveedor
@@ -1991,9 +2212,10 @@ paths:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/models.TipoDeclaracionProveedor'
+            $ref: '#/definitions/controllers.APIResponse'
         "400":
-          description: the request contains incorrect syntax
+          description: id, body o datos invalidos, Id distinto al de la ruta o registro
+            inexistente
     delete:
       tags:
       - tipo_declaracion_proveedor
@@ -2009,10 +2231,42 @@ paths:
         type: string
       responses:
         "200":
-          description: '{string} delete success!'
+          description: ""
+          schema:
+            $ref: '#/definitions/controllers.APIResponse'
         "404":
-          description: not found resource
+          description: id invalido o registro inexistente
 definitions:
+  controllers.APIResponse:
+    title: APIResponse
+    type: object
+    properties:
+      Data:
+        $ref: '#/definitions/controllers.interface'
+      Message:
+        type: string
+      Status:
+        type: string
+      Success:
+        type: boolean
+  controllers.APIResponseLista:
+    title: APIResponseLista
+    type: object
+    properties:
+      Data:
+        $ref: '#/definitions/controllers.interface'
+      Message:
+        type: string
+      Status:
+        type: string
+      Success:
+        type: boolean
+      Total:
+        type: integer
+        format: int64
+  controllers.interface:
+    title: interface
+    type: object
   models.ActividadEconomicaProveedor:
     title: ActividadEconomicaProveedor
     type: object
