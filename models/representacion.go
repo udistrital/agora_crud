@@ -57,6 +57,7 @@ func GetRepresentacionById(id int) (v *Representacion, err error) {
 // no records exist. total es la cantidad de registros que cumplen los filtros, sin aplicar limit ni offset
 func GetAllRepresentacion(query map[string]string, fields []string, sortby []string, order []string,
 	offset int64, limit int64) (ml []interface{}, total int64, err error) {
+	defer recuperarConsulta(&err)
 	o := orm.NewOrm()
 	qs := o.QueryTable(new(Representacion)).RelatedSel()
 	// query k=v
@@ -66,7 +67,7 @@ func GetAllRepresentacion(query map[string]string, fields []string, sortby []str
 		if strings.Contains(k, "isnull") {
 			qs = qs.Filter(k, (v == "true" || v == "1"))
 		} else {
-			qs = qs.Filter(k, v)
+			qs = qs.Filter(k, valorFiltro(new(Representacion), k, v))
 		}
 	}
 	// order by:

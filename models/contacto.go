@@ -59,6 +59,7 @@ func GetContactoById(id int) (v *Contacto, err error) {
 // no records exist. total es la cantidad de registros que cumplen los filtros, sin aplicar limit ni offset
 func GetAllContacto(query map[string]string, fields []string, sortby []string, order []string,
 	offset int64, limit int64) (ml []interface{}, total int64, err error) {
+	defer recuperarConsulta(&err)
 	o := orm.NewOrm()
 	qs := o.QueryTable(new(Contacto)).RelatedSel()
 	// query k=v
@@ -68,7 +69,7 @@ func GetAllContacto(query map[string]string, fields []string, sortby []string, o
 		if strings.Contains(k, "isnull") {
 			qs = qs.Filter(k, (v == "true" || v == "1"))
 		} else {
-			qs = qs.Filter(k, v)
+			qs = qs.Filter(k, valorFiltro(new(Contacto), k, v))
 		}
 	}
 	// order by:

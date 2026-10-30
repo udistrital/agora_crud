@@ -58,6 +58,7 @@ func GetProveedorJuridicoById(id int) (v *ProveedorJuridico, err error) {
 // no records exist. total es la cantidad de registros que cumplen los filtros, sin aplicar limit ni offset
 func GetAllProveedorJuridico(query map[string]string, fields []string, sortby []string, order []string,
 	offset int64, limit int64) (ml []interface{}, total int64, err error) {
+	defer recuperarConsulta(&err)
 	o := orm.NewOrm()
 	qs := o.QueryTable(new(ProveedorJuridico)).RelatedSel()
 	// query k=v
@@ -67,7 +68,7 @@ func GetAllProveedorJuridico(query map[string]string, fields []string, sortby []
 		if strings.Contains(k, "isnull") {
 			qs = qs.Filter(k, (v == "true" || v == "1"))
 		} else {
-			qs = qs.Filter(k, v)
+			qs = qs.Filter(k, valorFiltro(new(ProveedorJuridico), k, v))
 		}
 	}
 	// order by:
